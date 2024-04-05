@@ -1,0 +1,16 @@
+__pycache__
+
+# IDE files
+.idea/
+*.pyc
+
+*.pdf
+
+*.jpg
+*.jpeg
+*.png
+*.heif
+
+calibration.yml
+
+venv/

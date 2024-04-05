@@ -1,0 +1,13 @@
+colorama
+pandas
+numpy
+matplotlib
+opencv-python
+yamlloader
+torch
+openpyxl
+tqdm
+autograd
+scipy
+pvlib
+astropy
