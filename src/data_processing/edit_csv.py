@@ -1,7 +1,7 @@
 import os
 import csv
 
-data_dir = "C:/Users/aphimaneso/Work/Projects/solar_estimation/data/"
+data_dir = "Z:/Work/Projects/solar_estimation/data/"
 dataset_dir = os.path.join(data_dir, "dataset/")
 metadata_dir = os.path.join(dataset_dir, "metadata/")
 

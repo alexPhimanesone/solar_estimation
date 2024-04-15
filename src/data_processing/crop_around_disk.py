@@ -1,7 +1,7 @@
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
-    'C:/Users/aphimaneso/Work/Projects/solar_estimation/fisheye_to_equirectangular_v3')))
+    'C:/Users/aphimaneso/Work/Projects/mmsegmentation/fisheye_to_equirectangular_v3')))
 import numpy as np
 import cv2
 import yaml as yml
@@ -23,7 +23,7 @@ def calibrate(calib_set_path):
     if not(os.path.exists(calibration_path)):
         print(f"{Fore.YELLOW}Calibrating...{Style.RESET_ALL}")
 
-        data_dir = "C:/Users/aphimaneso/Work/Projects/solar_estimation/data/"
+        data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
         calibration_dir = os.path.join(data_dir, "calibration/")
         config_dir = os.path.join(calibration_dir, "config/")
         plots_path = os.path.join(calib_set_path, "Plots/")
@@ -43,7 +43,7 @@ def estimate_radius(calib_set_path):
     """
     print(f"{Fore.YELLOW}Estimating FOV...{Style.RESET_ALL}")
 
-    data_dir = "C:/Users/aphimaneso/Work/Projects/solar_estimation/data/"
+    data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
     calibration_dir = os.path.join(data_dir, "calibration/")
     config_dir = os.path.join(calibration_dir, "config/")
     dataset_dir = os.path.join(data_dir, "dataset/")
@@ -104,22 +104,32 @@ def crop_around_disk(pprad_path, img):
     Returns:
     Minimal square image with black corners.
     """
-    
+
+    # Load pp and rad
     with open(pprad_path, 'r') as f:
         data = yml.load(f, Loader=yml.SafeLoader)
     principal_point = data['principal_point']
     radius = data['radius']
 
-    cx, cy = round(principal_point[0]), round(principal_point[1])
-    disk_points = get_disk((principal_point, radius))
-    square_side = 2*radius + 1
+    # Calculate the bounding box for the disk region
+    cx, cy = map(round, principal_point)
+    x_min = cx - radius
+    y_min = cy - radius
+    x_max = cx + radius
+    y_max = cy + radius
 
-    img_disk = np.zeros((square_side, square_side, img.shape[2]))
-    for (y, x) in disk_points:
-        y_prime, x_prime = y - cy + radius,  x - cx + radius
-        img_disk[y_prime, x_prime] = img[y, x]
-    
-    return img_disk
+    # Crop the image using the bounding box
+    cropped_img = img[y_min:y_max+1, x_min:x_max+1]
+
+    # Calculate the coordinates of the disk points within the cropped image
+    y_coords, x_coords = np.meshgrid(np.arange(y_min, y_max+1), np.arange(x_min, x_max+1))
+    distances = (x_coords - cx)**2 + (y_coords - cy)**2
+    mask = distances <= radius**2
+
+    # Apply the mask to the cropped image
+    cropped_img = np.where(mask[..., np.newaxis], cropped_img, 0)
+
+    return cropped_img
 
 
 def calib_pprad(calib_set_path):
@@ -127,11 +137,9 @@ def calib_pprad(calib_set_path):
     Does the calibration, computes pprad, and plots results on an calibration image.
     """
     
-    data_dir = "C:/Users/aphimaneso/Work/Projects/solar_estimation/data/"
+    data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
     dataset_dir = os.path.join(data_dir, "dataset/")
     pprads_dir = os.path.join(dataset_dir, "pprads/")
-    calibration_path = os.path.join(calib_set_path,
-                                    os.path.basename(os.path.normpath(calib_set_path)) + ".yml")
     pprad_path = os.path.join(pprads_dir,
                               "pprad" + os.path.basename(os.path.normpath(calib_set_path))[len("calib"):] + ".yml")
     plots_path = os.path.join(calib_set_path, "Plots/")

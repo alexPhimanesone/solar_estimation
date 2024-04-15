@@ -1,10 +1,20 @@
 import os
 import sys
-from utils import read_csv
+import random
+from utils import read_csv, read_all_csv
 
-data_dir = "Z:/Work/Projects/solar_estimation/data"
+data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
 dataset_dir = os.path.join(data_dir, "dataset/")
 metadata_dir = os.path.join(dataset_dir, "metadata/")
+
+
+def get_id_mask(id_pic=None):
+    if id_pic is None:
+        print("Provide id_pic")
+        sys.exit(1)
+
+    id_mask = read_csv(os.path.join(metadata_dir, "pics_metadata.csv"), id_pic, "id_mask")
+    return id_mask
 
 
 def get_id_endroit(id_pic=None):
@@ -12,7 +22,7 @@ def get_id_endroit(id_pic=None):
         print("Provide id_pic")
         sys.exit(1)
     
-    id_endroit = eval(read_csv(os.path.join(metadata_dir, "pics_metadata.csv"), id_pic, "id_endroit"))
+    id_endroit = read_csv(os.path.join(metadata_dir, "pics_metadata.csv"), id_pic, "id_endroit")
     return id_endroit
 
 
@@ -22,6 +32,62 @@ def get_id_pprad(id_endroit=None, id_pic=None):
         sys.exit(1)
 
     if id_endroit is None:
-        id_endroit = eval(read_csv(os.path.join(metadata_dir, "pics_metadata.csv"), id_pic, "id_endroit"))
-    id_pprad = eval(read_csv(os.path.join(metadata_dir, "endroits_metadata.csv"), id_endroit, "id_pprad"))
+        id_endroit = read_csv(os.path.join(metadata_dir, "pics_metadata.csv"), id_pic, "id_endroit")
+    id_pprad = read_csv(os.path.join(metadata_dir, "endroits_metadata.csv"), id_endroit, "id_pprad")
     return id_pprad
+
+
+def get_id_phone(id_pic=None, id_endroit=None):
+    if id_endroit is None and id_pic is None:
+        print("Provide either id_endroit or id_pic")
+        sys.exit(1)
+
+    if id_endroit is None:
+        id_endroit = read_csv(os.path.join(metadata_dir, "endroits_metadata.csv"), id_pic, "id_endroit")
+    id_phone = read_csv(os.path.join(metadata_dir, "endroits_metadata.csv"), id_endroit, "id_phone")
+    return id_phone
+
+
+def get_id_lens(id_pic=None, id_endroit=None):
+    if id_endroit is None and id_pic is None:
+        print("Provide either id_endroit or id_pic")
+        sys.exit(1)
+
+    if id_endroit is None:
+        id_endroit = read_csv(os.path.join(metadata_dir, "endroits_metadata.csv"), id_pic, "id_endroit")
+    id_lens = read_csv(os.path.join(metadata_dir, "endroits_metadata.csv"), id_endroit, "id_lens")
+    return id_lens
+
+
+def get_random_matching_pprad(id_endroit=None, id_pic=None):
+    if id_endroit is None and id_pic is None:
+        print("Provide either id_endroit or id_pic")
+        sys.exit(1)
+
+    # Get id_phone and id_lens
+    if id_endroit is None:
+        id_endroit = read_csv(os.path.join(metadata_dir, "pics_metadata.csv"), id_pic, "id_endroit")
+    id_phone = get_id_phone(id_endroit=id_endroit)
+    id_lens = get_id_lens(id_endroit=id_endroit)
+    
+    # Choose a random corresponding pprad
+    data = read_all_csv(os.path.join(metadata_dir, "pprads_metadata.csv"))
+    corresponding_rows = [row for row in data if row['id_phone'] == id_phone and row['id_lens'] == id_lens]
+    if corresponding_rows:
+        random_row = random.choice(corresponding_rows)
+        random_id_pprad = random_row['id_pprad']
+        print("Randomly selected id_pprad:", random_id_pprad)
+        return random_id_pprad
+    else:
+        print("No pprad with this phone/lens couple.")
+
+
+def get_id_pic_list(id_endroit):
+    data = read_all_csv(os.path.join(metadata_dir, "pics_metadata.csv"))
+    id_pic_list = []
+    for row in data:
+        if row['id_endroit'] == str(id_endroit):
+            id_pic_list.append(row['id_pic'])
+    print(f"len(id_pic_list): {len(id_pic_list)}")
+    return id_pic_list
+    
