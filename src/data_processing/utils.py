@@ -80,3 +80,14 @@ def path_raw_to_jpg(img_path_raw):
     base_name, _ = os.path.splitext(filename)
     img_path_jpg = os.path.join(folder, base_name + ".jpg")
     return img_path_jpg
+
+
+def get_height_width(id_pic):
+    pic_path = os.path.join(pics_dir, f"pic{id_pic}.jpg")
+    pic = cv2.imread(pic_path)
+    return pic.shape[:2]
+
+def remove_first_zero(string):
+    if string[0] == '0':
+        string = string[1:]
+    return string

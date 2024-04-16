@@ -3,7 +3,7 @@ import sys
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
-from utils import read_raw_image, write_raw_image, path_raw_to_jpg
+from utils import read_raw_image, write_raw_image, get_height_width , path_raw_to_jpg
 
 data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
 masking_dir = os.path.join(data_dir   , "masking")
@@ -12,12 +12,10 @@ pics_dir    = os.path.join(dataset_dir, "pics/")
 masks_dir   = os.path.join(dataset_dir, "masks/")
 
 
-def and_masks(mask1_path, mask2_path, mask_and_path, id_pic, invert1=False, invert2=False):
+def and_masks(mask1_path, mask2_path, mask_and_path, id_pic, invert1=False, invert2=False, write_im=False):
     
     # Load
-    pic_path = os.path.join(pics_dir, f"pic{id_pic}.jpg")
-    pic = cv2.imread(pic_path)
-    height, width = pic.shape[:2]
+    height, width = get_height_width(id_pic)
     mask1 = read_raw_image(mask1_path, width=width, height=height)
     mask2 = read_raw_image(mask2_path, width=width, height=height)
 
@@ -27,7 +25,10 @@ def and_masks(mask1_path, mask2_path, mask_and_path, id_pic, invert1=False, inve
     mask_and = np.logical_and(mask1[:,:,0] == true1, mask2[:,:,0] == true2).astype(np.uint8) * 255
 
     # Save mask_and
-    #cv2.imwrite(path_raw_to_jpg(mask_and_path), mask_and)
+    if write_im:
+        cv2.imwrite(path_raw_to_jpg(mask1_path), mask1)
+        cv2.imwrite(path_raw_to_jpg(mask2_path), mask2)
+        cv2.imwrite(path_raw_to_jpg(mask_and_path), mask_and)
     write_raw_image(mask_and_path, mask_and)
 
 
@@ -58,7 +59,7 @@ def plot_line(id_pic, coo, axis):
 
     
 
-def join_masks(mask1_path, mask2_path, mask_join_path, id_pic, coo, axis):
+def join_masks(mask1_path, mask2_path, mask_join_path, id_pic, coo, axis, write_im=False):
     if not(axis == 'y' or axis == 'x'):
         print("axis is supposed to be 'y' or 'x'")
         sys.exit(1)
@@ -84,16 +85,15 @@ def join_masks(mask1_path, mask2_path, mask_join_path, id_pic, coo, axis):
         mask_join[:, coo:] = mask2[:, coo:]
 
     # Save mask_join
-    #cv2.imwrite(path_raw_to_jpg(mask_join_path), mask_join)
+    if write_im:
+        cv2.imwrite(path_raw_to_jpg(mask_join_path), mask_join)
     write_raw_image(mask_join_path, mask_join)
 
 
 def plot_rectangle(id_mask, y_start, y_end, x_start, x_end, id_pic):
     
     # Load mask
-    pic_path = os.path.join(pics_dir, f"pic{id_pic}.jpg")
-    pic = cv2.imread(pic_path)
-    height, width = pic.shape[:2]
+    height, width = get_height_width(id_pic)
     mask_path = os.path.join(masks_dir, f"mask{id_mask}.raw")
     mask = read_raw_image(mask_path, width=width, height=height)
     mask_copy = mask.copy()
@@ -114,9 +114,7 @@ def paint_mask(id_mask, y_start, y_end, x_start, x_end, color, id_pic):
     color_value = 0 if color == 'black' else 255
 
     # Load mask
-    pic_path = os.path.join(pics_dir, f"pic{id_pic}.jpg")
-    pic = cv2.imread(pic_path)
-    height, width = pic.shape[:2]
+    height, width = get_height_width(id_pic)
     mask_path = os.path.join(masks_dir, f"mask{id_mask}.raw")
     mask = read_raw_image(mask_path, width=width, height=height)
 
@@ -131,6 +129,19 @@ def paint_mask(id_mask, y_start, y_end, x_start, x_end, color, id_pic):
     filename_painted = filename[:4] + "_painted" + filename[4:]
     mask_painted_path = os.path.join(masking_dir, filename_painted)
     write_raw_image(mask_painted_path, mask_painted)
+
+
+def extend_black(mask_path, mask_extended_path, id_pic, radius=3,
+                 y_start=None, y_end=None, x_start=None, x_end=None, write_im=False):
+    height, width = get_height_width(id_pic)
+    mask = read_raw_image(mask_path, width=width, height=height)
+    mask_inverted = cv2.bitwise_not(mask)
+    kernel = np.ones((2*radius+1, 2*radius+1), dtype=np.uint8)
+    mask_inverted_extended = cv2.dilate(mask_inverted, kernel)
+    mask_extended = cv2.bitwise_not(mask_inverted_extended)
+    write_raw_image(mask_extended_path, mask_extended)
+    if write_im:
+        cv2.imwrite(path_raw_to_jpg(mask_extended_path), mask_extended)
 
 
 

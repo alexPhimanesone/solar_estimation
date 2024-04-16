@@ -83,7 +83,7 @@ def save_checks(id_pic, savenpz=False):
     cv2.imwrite(os.path.join(checks_dir, "1sky"          + id_pic + ".png"), checks['sky'])
     cv2.imwrite(os.path.join(checks_dir, "2img_original" + id_pic + ".png"), pic)
     cv2.imwrite(os.path.join(checks_dir, "2uncertain"    + id_pic + ".png"), checks['uncertain'])
-    npz_path = os.path.join(checks_dir, "checks" + id_pic + ".npz")
+    npz_path = os.path.join(checks_dir, "checks.npz")
     if os.path.exists(npz_path):
         os.remove(npz_path)
     if savenpz == True:
