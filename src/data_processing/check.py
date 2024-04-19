@@ -91,24 +91,29 @@ def save_checks(id_pic, savenpz=False):
                  img_origial=pic, nonsky0=checks['nonsky'], sky1=checks["sky"], uncertain2=checks['uncertain'])
 
 
-def check_endroit(id_endroit):
-
-    # Get id_pic_list
-    id_pic_list = get_id_pic_list(id_endroit)
+def save_checks_mult(id_pic_list, checks_mult_dir_name=None):
+    """
+    Save in a directory checks of multiple pics.
+    Args:
+    List of id_pic, corresponding to a mask or to an endroit.
+    """
 
     # Get dims
     pic0_path = pics_dir + f'/pic{id_pic_list[0]}.jpg'
     pic0_no_cropped = cv2.imread(pic0_path)
     height_no_cropped, width_no_cropped = pic0_no_cropped.shape[:2]
 
-    # Get id_pprad
-    id_pprad = get_id_pprad(id_endroit=id_endroit)
+    # Get pprad_path
+    id_pprad = get_id_pprad(id_pic=id_pic_list[0])
     if id_pprad == "-1":
             print("This endroit doesn't have a pprad. Assigning a random pprad with matching phone/lens.")
-            id_pprad = get_random_matching_pprad(id_endroit=id_endroit)
+            id_pprad = get_random_matching_pprad(id_pic=id_pic_list[0])
+    pprad_path = pprads_dir + f'/pprad{id_pprad}.yml'
 
-    endroit_dir = os.path.join(checks_dir, "endroit" + id_endroit + "/")
-    os.mkdir(endroit_dir)
+    if checks_mult_dir_name is None:
+        checks_mult_dir_name = "checks_mult/"
+    checks_mult_dir = os.path.join(checks_dir, checks_mult_dir_name)
+    os.mkdir(checks_mult_dir)
     for id_pic in id_pic_list:
     
         # Load pic and mask
@@ -122,7 +127,6 @@ def check_endroit(id_endroit):
             continue
         
         # Crop pic and mask
-        pprad_path = pprads_dir + f'/pprad{id_pprad}.yml'
         pic  = crop_around_disk(pprad_path, pic_no_cropped)
         mask = crop_around_disk(pprad_path, mask_no_cropped)
 
@@ -143,11 +147,11 @@ def check_endroit(id_endroit):
         checks['uncertain'] = np.where(               np.all(uncertain_mask == 255  , axis=-1, keepdims=True),
                                     0, pic)
         
-        # Save checks in endroit_dir
-        cv2.imwrite(os.path.join(endroit_dir, id_pic + "0nonsky"    + ".png"), checks['nonsky'])
-        cv2.imwrite(os.path.join(endroit_dir, id_pic + "1sky"       + ".png"), checks['sky'])
-        cv2.imwrite(os.path.join(endroit_dir, id_pic + "2uncertain" + ".png"), checks['uncertain'])
-        print(f"Pic {id_pic} saved at {endroit_dir}")
+        # Save checks in checks_mult_dir
+        cv2.imwrite(os.path.join(checks_mult_dir, id_pic + "0nonsky"    + ".png"), checks['nonsky'])
+        cv2.imwrite(os.path.join(checks_mult_dir, id_pic + "1sky"       + ".png"), checks['sky'])
+        cv2.imwrite(os.path.join(checks_mult_dir, id_pic + "2uncertain" + ".png"), checks['uncertain'])
+        print(f"Pic {id_pic} saved at {checks_mult_dir}")
 
 
 def pyplot():

@@ -87,7 +87,17 @@ def get_height_width(id_pic):
     pic = cv2.imread(pic_path)
     return pic.shape[:2]
 
+
 def remove_first_zero(string):
     if string[0] == '0':
         string = string[1:]
     return string
+
+
+def mult_channels(im_single_channel):
+    height, width = im_single_channel.shape[:2]
+    print(im_single_channel.shape)
+    im_mult_channels = np.zeros((height, width, 3))
+    im_mult_channels[im_single_channel[:, :, 0] ==   0] = (  0,   0,   0)
+    im_mult_channels[im_single_channel[:, :, 0] == 255] = (255, 255, 255)
+    return im_mult_channels

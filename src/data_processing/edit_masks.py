@@ -3,7 +3,7 @@ import sys
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
-from utils import read_raw_image, write_raw_image, get_height_width , path_raw_to_jpg
+from utils import read_raw_image, write_raw_image, get_height_width , path_raw_to_jpg, mult_channels
 
 data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
 masking_dir = os.path.join(data_dir   , "masking")
@@ -12,7 +12,7 @@ pics_dir    = os.path.join(dataset_dir, "pics/")
 masks_dir   = os.path.join(dataset_dir, "masks/")
 
 
-def and_masks(mask1_path, mask2_path, mask_and_path, id_pic, invert1=False, invert2=False, write_im=False):
+def and_masks(mask1_path, mask2_path, mask_and_path, id_pic, invert1=False, invert2=False, show_im=False):
     
     # Load
     height, width = get_height_width(id_pic)
@@ -25,7 +25,7 @@ def and_masks(mask1_path, mask2_path, mask_and_path, id_pic, invert1=False, inve
     mask_and = np.logical_and(mask1[:,:,0] == true1, mask2[:,:,0] == true2).astype(np.uint8) * 255
 
     # Save mask_and
-    if write_im:
+    if show_im:
         cv2.imwrite(path_raw_to_jpg(mask1_path), mask1)
         cv2.imwrite(path_raw_to_jpg(mask2_path), mask2)
         cv2.imwrite(path_raw_to_jpg(mask_and_path), mask_and)
@@ -58,8 +58,7 @@ def plot_line(id_pic, coo, axis):
     plt.show()
 
     
-
-def join_masks(mask1_path, mask2_path, mask_join_path, id_pic, coo, axis, write_im=False):
+def join_masks(mask1_path, mask2_path, mask_join_path, id_pic, coo, axis, show_im=False):
     if not(axis == 'y' or axis == 'x'):
         print("axis is supposed to be 'y' or 'x'")
         sys.exit(1)
@@ -85,63 +84,106 @@ def join_masks(mask1_path, mask2_path, mask_join_path, id_pic, coo, axis, write_
         mask_join[:, coo:] = mask2[:, coo:]
 
     # Save mask_join
-    if write_im:
+    if show_im:
         cv2.imwrite(path_raw_to_jpg(mask_join_path), mask_join)
     write_raw_image(mask_join_path, mask_join)
 
 
-def plot_rectangle(id_mask, y_start, y_end, x_start, x_end, id_pic):
+def plot_rectangle(id_pic, y_start, y_end, x_start, x_end):
     
-    # Load mask
-    height, width = get_height_width(id_pic)
-    mask_path = os.path.join(masks_dir, f"mask{id_mask}.raw")
-    mask = read_raw_image(mask_path, width=width, height=height)
-    mask_copy = mask.copy()
+    # Load pic
+    pic_path = os.path.join(pics_dir, f"pic{id_pic}.jpg")
+    pic = cv2.imread(pic_path)
 
     # Create mask_rectangle
-    mask_rectangle = cv2.rectangle(mask_copy, (x_start, y_start), (x_end, y_end), 128, 1)
+    pic_rectangle = cv2.rectangle(pic, (x_start, y_start), (x_end, y_end), 128, 1)
 
     # Show mask_rectangle
     plt.figure()
-    plt.imshow(mask_rectangle)
+    plt.imshow(pic_rectangle)
     plt.show()
 
 
-def paint_mask(id_mask, y_start, y_end, x_start, x_end, color, id_pic):
+def paint_mask(mask_to_paint_path, mask_painted_path, id_pic, color,
+               y_starts, y_ends, x_starts, x_ends, show_im=False):
+    
+    # Load mask
+    height, width = get_height_width(id_pic)
+    mask = read_raw_image(mask_to_paint_path, width=width, height=height)
+    
+    # Check arguments
+    if not(len(y_starts) == len(y_ends) and len(y_ends) == len(x_starts) and len(x_starts) == len(x_ends) and
+           y_starts < y_ends and x_starts < x_ends):
+        print("Invalid coo list")
+        sys.exit(1)
     if not(color == 'black' or color == 'white'):
         print("axis is supposed to be 'black' or 'white'")
         sys.exit(1)
     color_value = 0 if color == 'black' else 255
 
-    # Load mask
-    height, width = get_height_width(id_pic)
-    mask_path = os.path.join(masks_dir, f"mask{id_mask}.raw")
-    mask = read_raw_image(mask_path, width=width, height=height)
-
     # Modify mask
     mask_painted = mask.copy()
-    for y in range(y_start, y_end):
-        for x in range(x_start, x_end):
-            mask_painted[y, x, :] = color_value
+    for i in range(len(y_starts)):
+        for y in range(y_starts[i], y_ends[i]):
+            for x in range(x_starts[i], x_ends[i]):
+                for c in range(mask_painted.shape[2]):
+                    mask_painted[y, x, c] = color_value
     
     # Save modified mask
-    _, filename = os.path.split(mask_path)
-    filename_painted = filename[:4] + "_painted" + filename[4:]
-    mask_painted_path = os.path.join(masking_dir, filename_painted)
     write_raw_image(mask_painted_path, mask_painted)
+    if show_im:
+        cv2.imwrite(path_raw_to_jpg(mask_painted_path), mask_painted)
 
 
 def extend_black(mask_path, mask_extended_path, id_pic, radius=3,
-                 y_start=None, y_end=None, x_start=None, x_end=None, write_im=False):
+                 y_start=None, y_end=None, x_start=None, x_end=None, show_im=False):
+    
+    # Load and check
     height, width = get_height_width(id_pic)
+    if not(0 <= y_start and y_start <= y_end and y_end <= height and
+           0 <= x_start and x_start <= x_end and x_end <= width):
+        print("Wrong coordinates")
+        sys.exit(1)
     mask = read_raw_image(mask_path, width=width, height=height)
-    mask_inverted = cv2.bitwise_not(mask)
+    
+    # Extend in the roi
+    mask_roi = mask[y_start:y_end, x_start:x_end]
+    mask_roi_inverted = cv2.bitwise_not(mask_roi)
     kernel = np.ones((2*radius+1, 2*radius+1), dtype=np.uint8)
-    mask_inverted_extended = cv2.dilate(mask_inverted, kernel)
-    mask_extended = cv2.bitwise_not(mask_inverted_extended)
-    write_raw_image(mask_extended_path, mask_extended)
-    if write_im:
-        cv2.imwrite(path_raw_to_jpg(mask_extended_path), mask_extended)
+    mask_roi_inverted_extended = cv2.dilate(mask_roi_inverted, kernel)
+    mask_roi_extended = cv2.bitwise_not(mask_roi_inverted_extended)
+
+    # Fuse images
+    mask_fused = mask.copy()
+    mask_fused[y_start:y_end, x_start:x_end] = np.expand_dims(mask_roi_extended, axis=-1)
+
+    # Write the extended mask
+    write_raw_image(mask_extended_path, mask_fused)
+    if show_im:
+        cv2.imwrite(path_raw_to_jpg(mask_extended_path), mask_fused)
+
+
+def patch_mask(mask_to_patch_path, mask_patch_path, mask_patched_path, id_pic,
+               y_start, y_end, x_start, x_end, show_im=False):
+
+    # Load and check
+    height, width = get_height_width(id_pic)
+    if not(0 <= y_start and y_start <= y_end and y_end <= height and
+           0 <= x_start and x_start <= x_end and x_end <= width):
+        print("Wrong coordinates")
+        sys.exit(1)
+    mask_to_patch = read_raw_image(mask_to_patch_path, width=width, height=height)
+    mask_patch    = read_raw_image(mask_patch_path   , width=width, height=height)
+
+    # Patch mask
+    patch = mask_patch[y_start:y_end, x_start:x_end]
+    mask_patched = mask_to_patch.copy()
+    mask_patched[y_start:y_end, x_start:x_end] = mult_channels(patch)
+    
+    # Write mask_patched
+    write_raw_image(mask_patched_path, mask_patched)
+    if show_im:
+        cv2.imwrite(path_raw_to_jpg(mask_patched_path), mask_patched)
 
 
 

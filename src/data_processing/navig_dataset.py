@@ -82,12 +82,21 @@ def get_random_matching_pprad(id_endroit=None, id_pic=None):
         print("No pprad with this phone/lens couple.")
 
 
-def get_id_pic_list(id_endroit):
+def get_id_pic_list(id_endroit=None, id_mask=None):
+    if not((id_endroit is None) ^ (id_mask is None)):
+        print("Either use id_endroit or id_mask, not both.")
+        sys.exit(1)
     data = read_all_csv(os.path.join(metadata_dir, "pics_metadata.csv"))
     id_pic_list = []
-    for row in data:
-        if row['id_endroit'] == str(id_endroit):
-            id_pic_list.append(row['id_pic'])
+    
+    if not(id_endroit is None):    
+        for row in data:
+            if row['id_endroit'] == str(id_endroit):
+                id_pic_list.append(row['id_pic'])
+    else:
+        for row in data:
+            if row['id_mask'] == str(id_mask):
+                id_pic_list.append(row['id_pic'])
+    
     print(f"len(id_pic_list): {len(id_pic_list)}")
     return id_pic_list
-    
