@@ -2,7 +2,9 @@ import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
     'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/data_processing')))
-from utils import read_raw_image, write_raw_image, path_raw_to_jpg, remove_first_zero
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
+    'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/mmseg')))
+from utils import read_raw_image, write_raw_image, path_raw_to_jpg, remove_first_zero, get_height_width
 from navig_dataset import *
 
 data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
@@ -18,9 +20,62 @@ channel_dir  = os.path.join(checks_dir , "channel/")
 
 pp_phone  = "00"
 ee_endroit  = "10"
-iii = "063"
+iii = "002"
 id_pic = pp_phone + ee_endroit + iii
 
+
+#=================================================================
+#                       MMSEGMENTATION
+#=================================================================
+
+#'''
+import numpy as np
+import cv2
+import matplotlib.pyplot as plt
+from crop_around_disk import crop_around_disk
+from min_pooling import min_pooling
+from plot_pred import plot_pred
+
+resolution = (512, 512)
+id_pprad = 0 # le même pprad que celui sélectionné poru l'inférence
+pprad_path = os.path.join(pprads_dir, f"pprad{id_pprad}.yml")
+
+# load pred
+# COMMENT RESIZE PIC??? essayer max_pooling
+# comment ré-entraîner le réseau? multi-class -> binaire? adapter les masques?
+pred = np.load(os.path.join(data_dir, "pred.npy"))
+pred_bin = np.where(pred == 10, 255, 0)
+print(pred_bin.shape)
+
+# load gt mask
+height, width = get_height_width(id_pic=id_pic)
+mask = read_raw_image(os.path.join(masks_dir, f"mask{id_pic}.raw"), width, height)
+mask_a = crop_around_disk(pprad_path, mask)
+mask = min_pooling(mask_a, resolution) # trop lent, faire de la logique vectorisée à partir de max_pooling
+# median_pooling?? si ya plus de ciel -> ciel, si ya plus de non-ciel -> non-ciel?
+
+# compute loss
+diff = np.abs(mask - pred_bin)
+print(np.unique(mask))
+print(np.unique(pred_bin))
+print(np.unique(diff))
+nb_err = int(np.sum(diff) / 255)
+nb_px_disk = np.product(resolution) * np.pi / 4
+print(nb_px_disk)
+print(f"acc = {1 - nb_err/nb_px_disk}") #bords noirs hors cercle pris en compte
+
+# plot
+pic = cv2.imread(os.path.join(pics_dir, f"pic{id_pic}.jpg"))
+pic = crop_around_disk(pprad_path, pic)
+pic = cv2.resize(pic, resolution)
+plot_pred(pic, pred_bin, mask)
+#'''
+
+
+
+#=================================================================
+#                       MASK ANNOTATION
+#=================================================================
 
 '''
 #SAVE_CHECKS

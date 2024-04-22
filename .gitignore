@@ -11,6 +11,8 @@ __pycache__
 *.png
 *.heif
 
+data/checkpoints/
+
 calibration.yml
 
 venv/

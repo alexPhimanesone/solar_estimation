@@ -10,6 +10,17 @@ from colorama import Fore, Style
 import omnicalib as omni
 from calibrate_camera import calibrate_camera
 from camera_coords_to_image_intrinsic import camera_coords_to_image_intrinsic
+from navig_dataset import get_id_pprad, get_random_matching_pprad
+
+data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
+dataset_dir  = os.path.join(data_dir, "dataset/")
+pics_dir     = os.path.join(dataset_dir, "pics/")
+pprads_dir   = os.path.join(dataset_dir, "pprads/")
+masks_dir    = os.path.join(dataset_dir, "masks/")
+metadata_dir = os.path.join(dataset_dir, "metadata/")
+checks_dir   = os.path.join(data_dir, "checks/")
+zoom_dir     = os.path.join(checks_dir, "zoom/")
+channel_dir  = os.path.join(checks_dir, "channel/")
 
 
 def calibrate(calib_set_path):
@@ -163,3 +174,14 @@ def calib_pprad(calib_set_path):
     radius = data['radius']
     img_circle = cv2.circle(image, (round(cx), round(cy)), round(radius), (0, 0, 255), 2)
     cv2.imwrite(os.path.join(plots_path, "img_circle.jpg"), img_circle)
+
+
+def load_and_crop_pic(id_pic):
+    pic_path = os.path.join(pics_dir, f"pic{id_pic}.jpg")
+    pic_uncropped = cv2.imread(pic_path)
+    id_pprad = get_id_pprad(id_pic=id_pic)
+    if id_pprad == str(-1):
+        id_pprad = get_random_matching_pprad(id_pic=id_pic)
+    pprad_path = os.path.join(pprads_dir, f"pprad{id_pprad}.yml")
+    pic = crop_around_disk(pprad_path, pic_uncropped)
+    return pic
