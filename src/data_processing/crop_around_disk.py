@@ -10,7 +10,7 @@ from colorama import Fore, Style
 import omnicalib as omni
 from calibrate_camera import calibrate_camera
 from camera_coords_to_image_intrinsic import camera_coords_to_image_intrinsic
-from navig_dataset import get_id_pprad, get_random_matching_pprad
+from navig_dataset import get_id_pprad
 
 data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
 dataset_dir  = os.path.join(data_dir, "dataset/")
@@ -95,21 +95,6 @@ def estimate_radius(calib_set_path):
         yml.dump(data, f)
 
 
-def get_disk(pprad):
-    
-    principal_point = pprad[0]
-    radius = pprad[1]
-
-    disk_points = []
-    cx, cy = round(principal_point[0]), round(principal_point[1])
-    for y in range(round(cy - radius) - 1, round(cy + radius) + 1):
-        for x in range(round(cx - radius) - 1, round(cx + radius) + 1):
-            if ((x - cx)**2 + (y - cy)**2 <= radius**2):
-                disk_points.append((y, x))
-
-    return disk_points
-
-
 def crop_around_disk(pprad_path, img):
     """
     Returns:
@@ -135,10 +120,10 @@ def crop_around_disk(pprad_path, img):
     # Calculate the coordinates of the disk points within the cropped image
     y_coords, x_coords = np.meshgrid(np.arange(y_min, y_max+1), np.arange(x_min, x_max+1))
     distances = (x_coords - cx)**2 + (y_coords - cy)**2
-    mask = distances <= radius**2
+    disk_mask = distances <= radius**2
 
     # Apply the mask to the cropped image
-    cropped_img = np.where(mask[..., np.newaxis], cropped_img, 0)
+    cropped_img = np.where(disk_mask[..., np.newaxis], cropped_img, 0)
 
     return cropped_img
 
@@ -176,12 +161,27 @@ def calib_pprad(calib_set_path):
     cv2.imwrite(os.path.join(plots_path, "img_circle.jpg"), img_circle)
 
 
-def load_and_crop_pic(id_pic):
-    pic_path = os.path.join(pics_dir, f"pic{id_pic}.jpg")
-    pic_uncropped = cv2.imread(pic_path)
-    id_pprad = get_id_pprad(id_pic=id_pic)
-    if id_pprad == str(-1):
-        id_pprad = get_random_matching_pprad(id_pic=id_pic)
-    pprad_path = os.path.join(pprads_dir, f"pprad{id_pprad}.yml")
-    pic = crop_around_disk(pprad_path, pic_uncropped)
-    return pic
+def get_disk_mask(pprad_path):
+    """
+    Return disk mask on the cropped image
+    """
+
+    # Load pp and rad
+    with open(pprad_path, 'r') as f:
+        data = yml.load(f, Loader=yml.SafeLoader)
+    principal_point = data['principal_point']
+    radius = data['radius']
+
+    # Calculate the bounding box for the disk region
+    cx, cy = map(round, principal_point)
+    x_min = cx - radius
+    y_min = cy - radius
+    x_max = cx + radius
+    y_max = cy + radius
+
+    # Calculate the coordinates of the disk points within the cropped image
+    y_coords, x_coords = np.meshgrid(np.arange(y_min, y_max+1), np.arange(x_min, x_max+1))
+    distances = (x_coords - cx)**2 + (y_coords - cy)**2
+    disk_mask = distances <= radius**2
+
+    return disk_mask

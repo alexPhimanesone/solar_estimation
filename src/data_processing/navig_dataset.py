@@ -37,10 +37,35 @@ def get_id_pprad(id_endroit=None, id_pic=None):
         print("Provide either id_endroit or id_pic")
         sys.exit(1)
 
+    # Get id_endroit
     if id_endroit is None:
         id_endroit = read_csv(os.path.join(metadata_dir, "pics_metadata.csv"), id_pic, "id_endroit")
+    
+    # Get id_pprad from endroits_metadata.csv
     id_pprad = read_csv(os.path.join(metadata_dir, "endroits_metadata.csv"), id_endroit, "id_pprad")
-    return id_pprad
+
+    # If proper calibration
+    if id_pprad != str(-1):
+        return id_pprad
+    
+    # If no proper calibration
+    else:
+        print("No proper calibration.")
+
+        # Get id_phone and id_lens
+        id_phone = get_id_phone(id_endroit=id_endroit)
+        id_lens = get_id_lens(id_endroit=id_endroit)
+
+        # Choose a random corresponding pprad
+        data = read_all_csv(os.path.join(metadata_dir, "pprads_metadata.csv"))
+        corresponding_rows = [row for row in data if row['id_phone'] == id_phone and row['id_lens'] == id_lens]
+        if corresponding_rows:
+            random_row = random.choice(corresponding_rows)
+            random_id_pprad = random_row['id_pprad']
+            print("Randomly selected id_pprad:", random_id_pprad)
+            return random_id_pprad
+        else:
+            print("No pprad with this phone/lens couple.")    
 
 
 def get_id_phone(id_pic=None, id_endroit=None):
@@ -63,29 +88,6 @@ def get_id_lens(id_pic=None, id_endroit=None):
         id_endroit = read_csv(os.path.join(metadata_dir, "endroits_metadata.csv"), id_pic, "id_endroit")
     id_lens = read_csv(os.path.join(metadata_dir, "endroits_metadata.csv"), id_endroit, "id_lens")
     return id_lens
-
-
-def get_random_matching_pprad(id_endroit=None, id_pic=None):
-    if id_endroit is None and id_pic is None:
-        print("Provide either id_endroit or id_pic")
-        sys.exit(1)
-
-    # Get id_phone and id_lens
-    if id_endroit is None:
-        id_endroit = read_csv(os.path.join(metadata_dir, "pics_metadata.csv"), id_pic, "id_endroit")
-    id_phone = get_id_phone(id_endroit=id_endroit)
-    id_lens = get_id_lens(id_endroit=id_endroit)
-    
-    # Choose a random corresponding pprad
-    data = read_all_csv(os.path.join(metadata_dir, "pprads_metadata.csv"))
-    corresponding_rows = [row for row in data if row['id_phone'] == id_phone and row['id_lens'] == id_lens]
-    if corresponding_rows:
-        random_row = random.choice(corresponding_rows)
-        random_id_pprad = random_row['id_pprad']
-        print("Randomly selected id_pprad:", random_id_pprad)
-        return random_id_pprad
-    else:
-        print("No pprad with this phone/lens couple.")
 
 
 def get_id_pic_list(id_endroit=None, id_mask=None):

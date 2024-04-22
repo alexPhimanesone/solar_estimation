@@ -4,6 +4,8 @@ __pycache__
 .idea/
 *.pyc
 
+Thumbs.db
+
 *.pdf
 
 *.jpg

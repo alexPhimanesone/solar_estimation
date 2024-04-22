@@ -4,10 +4,10 @@ import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 import yaml as yml
-from crop_around_disk import get_disk, crop_around_disk
+from crop_around_disk import crop_around_disk
 from get_uncertain_mask import get_uncertain_mask
 from utils import read_raw_image, read_csv
-from navig_dataset import get_id_mask, get_id_endroit, get_id_pprad, get_random_matching_pprad, get_id_pic_list
+from navig_dataset import get_id_mask, get_id_endroit, get_id_pprad, get_id_pic_list
 
 data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
 masking_dir  = os.path.join(data_dir   , "masking/")
@@ -45,9 +45,6 @@ def save_checks(id_pic, savenpz=False):
         mask_no_cropped = np.zeros((height_no_cropped, width_no_cropped, 3))
     
     # Crop pic and mask
-    if id_pprad == "-1":
-        print("This endroit doesn't have a pprad. Assigning a random pprad with matching phone/lens.")
-        id_pprad = get_random_matching_pprad(id_endroit=id_endroit)
     pprad_path = pprads_dir + f'/pprad{id_pprad}.yml'
     pic = crop_around_disk(pprad_path, pic_no_cropped)
     mask = crop_around_disk(pprad_path, mask_no_cropped)

@@ -19,58 +19,71 @@ zoom_dir     = os.path.join(checks_dir , "zoom/")
 channel_dir  = os.path.join(checks_dir , "channel/")
 
 pp_phone  = "00"
-ee_endroit  = "10"
-iii = "002"
+ee_endroit  = "00"
+iii = "044"
 id_pic = pp_phone + ee_endroit + iii
 
 
 #=================================================================
-#                       MMSEGMENTATION
+#                       MMSEGMENTATIONprepc
 #=================================================================
 
-#'''
+
 import numpy as np
-import cv2
 import matplotlib.pyplot as plt
-from crop_around_disk import crop_around_disk
-from min_pooling import min_pooling
-from plot_pred import plot_pred
+import cv2
+import json
+from crop_around_disk import crop_around_disk, get_disk_mask
+from downsize_mask import quantile_pooling
+from metrics import confusion_mat_rates, acc, plot_cm
+from inference import inference
+
+out_dir = os.path.join(data_dir, "out/")
 
 resolution = (512, 512)
-id_pprad = 0 # le même pprad que celui sélectionné poru l'inférence
-pprad_path = os.path.join(pprads_dir, f"pprad{id_pprad}.yml")
 
-# load pred
-# COMMENT RESIZE PIC??? essayer max_pooling
-# comment ré-entraîner le réseau? multi-class -> binaire? adapter les masques?
-pred = np.load(os.path.join(data_dir, "pred.npy"))
-pred_bin = np.where(pred == 10, 255, 0)
-print(pred_bin.shape)
 
-# load gt mask
-height, width = get_height_width(id_pic=id_pic)
-mask = read_raw_image(os.path.join(masks_dir, f"mask{id_pic}.raw"), width, height)
-mask_a = crop_around_disk(pprad_path, mask)
-mask = min_pooling(mask_a, resolution) # trop lent, faire de la logique vectorisée à partir de max_pooling
-# median_pooling?? si ya plus de ciel -> ciel, si ya plus de non-ciel -> non-ciel?
+in_dir = os.path.join(data_dir, "in/")
+for file_name in os.listdir(in_dir):
 
-# compute loss
-diff = np.abs(mask - pred_bin)
-print(np.unique(mask))
-print(np.unique(pred_bin))
-print(np.unique(diff))
-nb_err = int(np.sum(diff) / 255)
-nb_px_disk = np.product(resolution) * np.pi / 4
-print(nb_px_disk)
-print(f"acc = {1 - nb_err/nb_px_disk}") #bords noirs hors cercle pris en compte
+    # Load pic and mask
+    pic_path = os.path.join(in_dir, file_name)
+    id_pic = file_name[3:10]
+    pic = cv2.imread(pic_path)
+    id_mask = get_id_mask(id_pic=id_pic)
+    mask_path = os.path.join(masks_dir, f"mask{id_mask}.raw")
+    height, width = get_height_width(id_pic)
+    mask = read_raw_image(mask_path, width=width, height=height)
 
-# plot
-pic = cv2.imread(os.path.join(pics_dir, f"pic{id_pic}.jpg"))
-pic = crop_around_disk(pprad_path, pic)
-pic = cv2.resize(pic, resolution)
-plot_pred(pic, pred_bin, mask)
-#'''
+    # Crop pic and mask
+    id_pprad = get_id_pprad(id_pic=id_pic)
+    pprad_path = os.path.join(pprads_dir, f"pprad{id_pprad}.yml")
+    pic = crop_around_disk(pprad_path, pic)
+    mask = crop_around_disk(pprad_path, mask)
+    disk_mask = get_disk_mask(pprad_path)
 
+    # Downsize pic and mask
+    pic = quantile_pooling(pic, resolution, disk_mask, q=1)
+    mask, disk_mask = quantile_pooling(mask, resolution, disk_mask, q=1/4)
+
+    '''
+    # Inference
+    pred = inference(pic)
+    pred = np.where(pred == 10, 255, 0)
+
+    # Compute metrics
+    metrics = {}
+    metrics['cm'] = confusion_mat_rates(pred, mask, disk_mask)
+    metrics['acc'] = acc(pred, mask, disk_mask)    
+
+    # Save metrics
+    metrics_json = json.dumps(metrics)
+    metrics_path = os.path.join(out_dir, f"metrics{id_pic}.txt")
+    with open(metrics_path, 'w') as f:
+        f.write(metrics_json)
+    fig_path = os.path.join(out_dir, f"fig{id_pic}.png")
+    plot_cm(pred, mask, disk_mask, fig_path)
+    '''
 
 
 #=================================================================
@@ -89,9 +102,12 @@ save_checks(id_pic)
 #SAVE_CHECKS_MULT
 from check import save_checks_mult
 from navig_dataset import get_id_pic_list
-id_mask = "0010106"
-id_pic_list = get_id_pic_list(id_mask=id_mask)
-save_checks_mult(id_pic_list, f"mask{id_mask}")
+in_dir = os.path.join(data_dir, "in/")
+files_names = os.listdir(in_dir)
+id_pic_list = []
+for file_name in files_names:
+    id_pic_list.append(file_name[3:10])
+save_checks_mult(id_pic_list, "in")
 '''
 
 '''
