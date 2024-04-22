@@ -21,6 +21,7 @@ checkpoint_path = os.path.join(checkpoints_dir,
 
 
 def inference(pics):
+    print(pics)
     #model = init_model(config_path, checkpoint_path, 'cpu')
     inferencer = MMSegInferencer(model=model)
     result = inferencer(pics)

@@ -34,16 +34,17 @@ import matplotlib.pyplot as plt
 import cv2
 import json
 from crop_around_disk import crop_around_disk, get_disk_mask
-from downsize_mask import quantile_pooling
+from downsize import quantile_pooling
 from metrics import confusion_mat_rates, acc, plot_cm
 from inference import inference
 
-out_dir = os.path.join(data_dir, "out/")
+inference_dir = os.path.join(data_dir, "inference/")
+in_dir        = os.path.join(inference_dir, "in/")
+out_dir       = os.path.join(inference_dir, "out/")
 
-resolution = (512, 512)
+resolution = (128, 128)
 
 
-in_dir = os.path.join(data_dir, "in/")
 for file_name in os.listdir(in_dir):
 
     # Load pic and mask
@@ -63,10 +64,9 @@ for file_name in os.listdir(in_dir):
     disk_mask = get_disk_mask(pprad_path)
 
     # Downsize pic and mask
-    pic = quantile_pooling(pic, resolution, disk_mask, q=1)
-    mask, disk_mask = quantile_pooling(mask, resolution, disk_mask, q=1/4)
+    pic, disk_mask = quantile_pooling(pic , resolution, disk_mask, q=1  )
+    mask, _        = quantile_pooling(mask, resolution, disk_mask, q=1/4)
 
-    '''
     # Inference
     pred = inference(pic)
     pred = np.where(pred == 10, 255, 0)
@@ -83,7 +83,6 @@ for file_name in os.listdir(in_dir):
         f.write(metrics_json)
     fig_path = os.path.join(out_dir, f"fig{id_pic}.png")
     plot_cm(pred, mask, disk_mask, fig_path)
-    '''
 
 
 #=================================================================

@@ -25,11 +25,15 @@ def divide_into_parts(a, b):
 
 def quantile_pooling(image, resolution, disk_mask, q=1/2):
 
-    height, width = image.shape[:2]
+    # Get dims and kernels lists
+    if len(image.shape) < 3:
+        image = np.expand_dims(image, axis=-1)
+    height, width, channel = image.shape
     output_height, output_width = resolution
     kernel_list_y, kernel_list_x = divide_into_parts(height, output_height), divide_into_parts(width, output_width)
 
-    output = np.zeros(resolution, dtype=np.uint8)
+    # Iterate over the regions
+    output = np.zeros((output_height, output_width, channel), dtype=np.uint8)
     output_disk_mask = np.zeros(resolution)
     y_end = 0
     for y in range(output_height):
@@ -40,13 +44,15 @@ def quantile_pooling(image, resolution, disk_mask, q=1/2):
             x_start = x_end
             x_end = x_start + kernel_list_x[x]
 
-            # Take the minimum value from the region
+            # Pooling
             region = image[y_start:y_end, x_start:x_end][disk_mask[y_start:y_end, x_start:x_end]]
             if region.size > 0:
-                value = np.quantile(region, q)
                 output_disk_mask[y, x] = 1
+                output[y, x] = np.quantile(region, q, axis=0) # region.shape is (nb_pixels, channel)
             else:
-                value = 0
-            output[y, x] = value
-
+                output[y, x] = np.zeros(channel)
+    
+    # Initial shape
+    if channel == 1:
+        output = np.squeeze(output, axis=-1)
     return output, output_disk_mask
