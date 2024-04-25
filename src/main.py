@@ -1,34 +1,63 @@
 import os
 import sys
+import torch
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
     'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/data_processing')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
     'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/mmseg')))
-from utils import read_raw_image, write_raw_image, path_raw_to_jpg, remove_first_zero, get_height_width
-from navig_dataset import *
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
+    'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/ai')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
+    'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/sky_detection')))
+from load import draw_id_pprad_list
+from utils import read_raw_image, write_raw_image, path_raw_to_jpg, get_height_width
 
 data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
-masking_dir  = os.path.join(data_dir   , "masking/")
-dataset_dir  = os.path.join(data_dir   , "dataset/")
-checks_dir   = os.path.join(data_dir   , "checks/")
-pics_dir     = os.path.join(dataset_dir, "pics/")
-pprads_dir   = os.path.join(dataset_dir, "pprads/")
-masks_dir    = os.path.join(dataset_dir, "masks/")
-metadata_dir = os.path.join(dataset_dir, "metadata/")
-zoom_dir     = os.path.join(checks_dir , "zoom/")
-channel_dir  = os.path.join(checks_dir , "channel/")
-
-pp_phone  = "00"
-ee_endroit  = "00"
-iii = "044"
-id_pic = pp_phone + ee_endroit + iii
+masking_dir   = os.path.join(data_dir     , "masking/")
+dataset_dir   = os.path.join(data_dir     , "dataset/")
+checks_dir    = os.path.join(data_dir     , "checks/")
+pics_dir      = os.path.join(dataset_dir  , "pics/")
+pprads_dir    = os.path.join(dataset_dir  , "pprads/")
+masks_dir     = os.path.join(dataset_dir  , "masks/")
+metadata_dir  = os.path.join(dataset_dir  , "metadata/")
+zoom_dir      = os.path.join(checks_dir   , "zoom/")
+channel_dir   = os.path.join(checks_dir   , "channel/")
+inference_dir = os.path.join(data_dir     , "Inference/")
+in_dir        = os.path.join(inference_dir, "in/")
 
 
 #=================================================================
-#                       MMSEGMENTATIONprepc
+#                       SKY_DETECTION
 #=================================================================
 
+#'''
+from train import train
+from utils import get_device
 
+# HYPERPARAM
+hp = {}
+hp['id_pprad_list'] = draw_id_pprad_list().tolist()
+hp['pool_kernel']   = 5
+hp['batch_sizes']   = {'train': 2, 'val': 1, 'test': 1}
+hp['alpha_leaky']   = 0.1
+hp['loss']          = 'BCEWithLogits'
+hp['epochs']        = 2
+hp['min_delta']     = 0
+hp['initial_lr']    = 1e-2
+hp['lr_patience']   = 5
+hp['lr_factor']     = 0.8
+hp['lr_min']        = 5e-6
+hp['stop_patience'] = 70
+
+pics_masks_dataset = train(get_device(), in_dir, hp)
+#'''
+
+
+#=================================================================
+#                       MMSEGMENTATION
+#=================================================================
+
+'''
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
@@ -83,11 +112,19 @@ for file_name in os.listdir(in_dir):
         f.write(metrics_json)
     fig_path = os.path.join(out_dir, f"fig{id_pic}.png")
     plot_cm(pred, mask, disk_mask, fig_path)
+'''
 
 
 #=================================================================
 #                       MASK ANNOTATION
 #=================================================================
+
+'''
+pp_phone  = "00"
+ee_endroit  = "01"
+iii = "045"
+id_pic = pp_phone + ee_endroit + iii
+'''
 
 '''
 #SAVE_CHECKS

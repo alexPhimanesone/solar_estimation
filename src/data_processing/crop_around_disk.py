@@ -114,13 +114,13 @@ def crop_around_disk(pprad_path, img):
     x_max = cx + radius
     y_max = cy + radius
 
-    # Crop the image using the bounding box
-    cropped_img = img[y_min:y_max+1, x_min:x_max+1]
-
     # Calculate the coordinates of the disk points within the cropped image
     y_coords, x_coords = np.meshgrid(np.arange(y_min, y_max+1), np.arange(x_min, x_max+1))
     distances = (x_coords - cx)**2 + (y_coords - cy)**2
     disk_mask = distances <= radius**2
+
+    # Crop the image using the bounding box
+    cropped_img = img[y_min:y_max+1, x_min:x_max+1]
 
     # Apply the mask to the cropped image
     cropped_img = np.where(disk_mask[..., np.newaxis], cropped_img, 0)
@@ -185,3 +185,12 @@ def get_disk_mask(pprad_path):
     disk_mask = distances <= radius**2
 
     return disk_mask
+
+
+def get_disk_mask_list(id_pprad_list):
+    disk_mask_list = []
+    for i in range(len(id_pprad_list)):
+        pprad_path = os.path.join(pprads_dir, f"pprad{id_pprad_list[i]}.yml")
+        disk_mask = get_disk_mask(pprad_path)
+        disk_mask_list.append(disk_mask)
+    return disk_mask_list
