@@ -5,17 +5,23 @@ __pycache__
 *.pyc
 .vscode/
 
-Thumbs.db
+# Virtual environments
+venv/
 
-*.pdf
-
+# Images
 *.jpg
 *.jpeg
 *.png
 *.heif
 
+# Tranings
 data/checkpoints/
+*.pt
+*.pth
 
 calibration.yml
+*.pdf
 
-venv/
+notes_training.txt
+
+Thumbs.db

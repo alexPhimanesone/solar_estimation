@@ -1,0 +1,17 @@
+BILAN entraînement
+
+
+acc très haute parce que pas crop et pas focus sur le disque
+-> à faire
+
+DANS LE DISQUE
+Pour train:
+la majorité des obstacles (bâtiments, arbres, végétation) bas sont bien catégorisés non-ciel
+les fin de branches d'arbres sont moins bien prédits
+les obstacles fins sont moins bien prédits
+pas trop de sensibilité aux nuages
+quelques points de FN dans le ciel -> c remove en post-processing (hypothèse pas d'objets volants)
+en début de soirée les obstacles fins sont moins bien repérés: beaucoup de FP
+Pour test:
+pareil
+quelques obstacles bas pas repérés (rare)

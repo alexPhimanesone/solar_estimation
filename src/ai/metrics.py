@@ -15,10 +15,10 @@ white = (255, 255, 255)
 def confusion_mat(pred, mask, disk_mask):
 
     # Compute confusion mat
-    TP = np.sum((disk_mask == 1) & (pred == 255) & (mask == 255))
+    TP = np.sum((disk_mask == 1) & (pred ==   1) & (mask ==   1))
     TN = np.sum((disk_mask == 1) & (pred ==   0) & (mask ==   0))
-    FP = np.sum((disk_mask == 1) & (pred == 255) & (mask ==   0))
-    FN = np.sum((disk_mask == 1) & (pred ==   0) & (mask == 255))
+    FP = np.sum((disk_mask == 1) & (pred ==   1) & (mask ==   0))
+    FN = np.sum((disk_mask == 1) & (pred ==   0) & (mask ==   1))
     
     confusion_mat = {}
     confusion_mat['TP'] = TP
@@ -31,12 +31,14 @@ def confusion_mat(pred, mask, disk_mask):
 def confusion_mat_rates(pred, mask, disk_mask):
 
     # Compute confusion mat
-    TP = np.sum((disk_mask == 1) & (pred == 255) & (mask == 255))
+    TP = np.sum((disk_mask == 1) & (pred ==   1) & (mask ==   1))
     TN = np.sum((disk_mask == 1) & (pred ==   0) & (mask ==   0))
-    FP = np.sum((disk_mask == 1) & (pred == 255) & (mask ==   0))
-    FN = np.sum((disk_mask == 1) & (pred ==   0) & (mask == 255))
+    FP = np.sum((disk_mask == 1) & (pred ==   1) & (mask ==   0))
+    FN = np.sum((disk_mask == 1) & (pred ==   0) & (mask ==   1))
     nb_tot = TP + TN + FP + FN
     
+    print(TP, TN, FP, FN, nb_tot)
+
     confusion_mat = {}
     confusion_mat['TP'] = TP / nb_tot
     confusion_mat['TN'] = TN / nb_tot
@@ -56,24 +58,24 @@ def acc(pred, mask, disk_mask):
 def plot_cm(pred, mask, disk_mask, fig_path):
     height, width = pred.shape[:2]
     fig = np.zeros((height, width, 3), dtype=np.uint8)
-    fig[(disk_mask == 1) & (pred == 255) & (mask == 255)] = blue
+    fig[(disk_mask == 1) & (pred ==   1) & (mask ==   1)] = blue
     fig[(disk_mask == 1) & (pred ==   0) & (mask ==   0)] = black
-    fig[(disk_mask == 1) & (pred == 255) & (mask ==   0)] = red
-    fig[(disk_mask == 1) & (pred ==   0) & (mask == 255)] = brown
+    fig[(disk_mask == 1) & (pred ==   1) & (mask ==   0)] = red
+    fig[(disk_mask == 1) & (pred ==   0) & (mask ==   1)] = brown
     fig[disk_mask == 0] = 0
     cv2.imwrite(fig_path, fig)
 
 
 def precision(pred, mask, disk_mask):
-    TP = np.sum((disk_mask == 1) & (pred == 255) & (mask == 255))
-    FP = np.sum((disk_mask == 1) & (pred == 255) & (mask ==   0))
+    TP = np.sum((disk_mask == 1) & (pred ==   1) & (mask ==   1))
+    FP = np.sum((disk_mask == 1) & (pred ==   1) & (mask ==   0))
     precision = TP / (TP + FP)
     return precision
 
 
 def recall(pred, mask, disk_mask):
-    TP = np.sum((disk_mask == 1) & (pred == 255) & (mask == 255))
-    FN = np.sum((disk_mask == 1) & (pred ==   0) & (mask == 255))
+    TP = np.sum((disk_mask == 1) & (pred ==   1) & (mask ==   1))
+    FN = np.sum((disk_mask == 1) & (pred ==   0) & (mask ==   1))
     recall = TP / (TP + FN)
     return recall
 

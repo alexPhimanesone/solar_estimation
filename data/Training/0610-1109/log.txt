@@ -1,0 +1,517 @@
+(mmsegmentation) PS C:\Users\aphimaneso\Work\Projects\mmsegmentation\src> python .\mmseg\retrain.py
+Current timestamp: 0610-1109
+Training is gonna start!
+06/10 11:09:39 - mmengine - INFO -
+------------------------------------------------------------
+System environment:
+    sys.platform: win32
+    Python: 3.9.0 (tags/v3.9.0:9cf6752, Oct  5 2020, 15:34:40) [MSC v.1927 64 bit (AMD64)]
+    CUDA available: False
+    MUSA available: False
+    numpy_random_seed: 0
+    MSVC: Compilateur d'optimisation Microsoft (R) C/C++ version 19.39.33523 pour x64
+    GCC: n/a
+    PyTorch: 2.2.2+cu121
+    PyTorch compiling details: PyTorch built with:
+  - C++ Version: 201703
+  - MSVC 192930151
+  - Intel(R) Math Kernel Library Version 2020.0.2 Product Build 20200624 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v3.3.2 (Git Hash 2dc95a2ad0841e29db8b22fbccaf3e5da7992b01)
+  - OpenMP 2019
+  - LAPACK is enabled (usually provided by MKL)
+  - CPU capability usage: NO AVX
+  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, CUDA_VERSION=12.1, CUDNN_VERSION=8.8.1, CXX_COMPILER=C:/actions-runner/_work/pytorch/pytorch/builder/windows/tmp_bin/sccache-cl.exe, CXX_FLAGS=/DWIN32 /D_WINDOWS /GR /EHsc /Zc:__cplusplus /bigobj /FS /utf-8 -DUSE_PTHREADPOOL -DNDEBUG -DUSE_KINETO -DLIBKINETO_NOCUPTI -DLIBKINETO_NOROCTRACER -DUSE_FBGEMM -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE /wd4624 /wd4068 /wd4067 /wd4267 /wd4661 /wd4717 /wd4244 /wd4804 /wd4273, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, TORCH_VERSION=2.2.2, USE_CUDA=ON, USE_CUDNN=ON, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=OFF, USE_NNPACK=OFF, USE_OPENMP=ON, USE_ROCM=OFF, USE_ROCM_KERNEL_ASSERT=OFF,
+
+    TorchVision: 0.17.2+cu121
+    OpenCV: 4.9.0
+    MMEngine: 0.10.3
+
+Runtime environment:
+    cudnn_benchmark: True
+    dist_cfg: {'backend': 'nccl'}
+    mp_cfg: {'mp_start_method': 'fork', 'opencv_num_threads': 0}
+    seed: 0
+    Distributed launcher: none
+    Distributed training: False
+    GPU number: 1
+------------------------------------------------------------
+
+06/10 11:09:40 - mmengine - INFO - Config:
+crop_size = (
+    256,
+    256,
+)
+data_preprocessor = dict(
+    bgr_to_rgb=True,
+    mean=[
+        123.675,
+        116.28,
+        103.53,
+    ],
+    pad_val=0,
+    seg_pad_val=255,
+    size=(
+        512,
+        1024,
+    ),
+    std=[
+        58.395,
+        57.12,
+        57.375,
+    ],
+    type='SegDataPreProcessor')
+data_root = 'C:/Users/aphimaneso/Work/Projects/mmsegmentation/data\\dataset\\mmseg_orga/cropped'
+dataset_type = 'SkyDetectionDataset'
+default_hooks = dict(
+    checkpoint=dict(by_epoch=False, interval=50, type='CheckpointHook'),
+    logger=dict(interval=25, log_metric_by_epoch=False, type='LoggerHook'),
+    param_scheduler=dict(type='ParamSchedulerHook'),
+    sampler_seed=dict(type='DistSamplerSeedHook'),
+    timer=dict(type='IterTimerHook'),
+    visualization=dict(type='SegVisualizationHook'))
+default_scope = 'mmseg'
+env_cfg = dict(
+    cudnn_benchmark=True,
+    dist_cfg=dict(backend='nccl'),
+    mp_cfg=dict(mp_start_method='fork', opencv_num_threads=0))
+img_ratios = [
+    0.5,
+    0.75,
+    1.0,
+    1.25,
+    1.5,
+    1.75,
+]
+load_from = 'mmseg/configs/unet/fcn_unet_s5-d16_4x4_512x1024_160k_cityscapes_20211210_145204-6860854e.pth'
+log_level = 'INFO'
+log_processor = dict(by_epoch=False)
+model = dict(
+    auxiliary_head=dict(
+        align_corners=False,
+        channels=64,
+        concat_input=False,
+        dropout_ratio=0.1,
+        in_channels=128,
+        in_index=3,
+        loss_decode=dict(
+            loss_weight=0.4, type='CrossEntropyLoss', use_sigmoid=False),
+        norm_cfg=dict(requires_grad=True, type='BN'),
+        num_classes=2,
+        num_convs=1,
+        out_channels=2,
+        type='FCNHead'),
+    backbone=dict(
+        act_cfg=dict(type='ReLU'),
+        base_channels=64,
+        conv_cfg=None,
+        dec_dilations=(
+            1,
+            1,
+            1,
+            1,
+        ),
+        dec_num_convs=(
+            2,
+            2,
+            2,
+            2,
+        ),
+        downsamples=(
+            True,
+            True,
+            True,
+            True,
+        ),
+        enc_dilations=(
+            1,
+            1,
+            1,
+            1,
+            1,
+        ),
+        enc_num_convs=(
+            2,
+            2,
+            2,
+            2,
+            2,
+        ),
+        in_channels=3,
+        norm_cfg=dict(requires_grad=True, type='BN'),
+        norm_eval=False,
+        num_stages=5,
+        strides=(
+            1,
+            1,
+            1,
+            1,
+            1,
+        ),
+        type='UNet',
+        upsample_cfg=dict(type='InterpConv'),
+        with_cp=False),
+    data_preprocessor=dict(
+        bgr_to_rgb=True,
+        mean=[
+            123.675,
+            116.28,
+            103.53,
+        ],
+        pad_val=0,
+        seg_pad_val=255,
+        size=(
+            256,
+            256,
+        ),
+        std=[
+            58.395,
+            57.12,
+            57.375,
+        ],
+        type='SegDataPreProcessor'),
+    decode_head=dict(
+        align_corners=False,
+        channels=64,
+        concat_input=False,
+        dropout_ratio=0.1,
+        in_channels=64,
+        in_index=4,
+        loss_decode=dict(
+            loss_weight=1.0, type='CrossEntropyLoss', use_sigmoid=False),
+        norm_cfg=dict(requires_grad=True, type='BN'),
+        num_classes=2,
+        num_convs=1,
+        out_channels=2,
+        type='FCNHead'),
+    pretrained=None,
+    test_cfg=dict(crop_size=(
+        256,
+        256,
+    ), mode='slide', stride=(
+        170,
+        170,
+    )),
+    train_cfg=dict(),
+    type='EncoderDecoder')
+norm_cfg = dict(requires_grad=True, type='BN')
+optim_wrapper = dict(
+    clip_grad=None,
+    optimizer=dict(lr=0.01, momentum=0.9, type='SGD', weight_decay=0.0005),
+    type='OptimWrapper')
+optimizer = dict(lr=0.01, momentum=0.9, type='SGD', weight_decay=0.0005)
+param_scheduler = [
+    dict(
+        begin=0,
+        by_epoch=False,
+        end=160000,
+        eta_min=0.0001,
+        power=0.9,
+        type='PolyLR'),
+]
+randomness = dict(seed=0)
+resume = False
+test_cfg = dict(type='TestLoop')
+test_dataloader = dict(
+    batch_size=1,
+    dataset=dict(
+        data_prefix=dict(
+            img_path=
+            'C:/Users/aphimaneso/Work/Projects/mmsegmentation/data\\dataset\\mmseg_orga/cropped\\img_dir\\test',
+            seg_map_path=
+            'C:/Users/aphimaneso/Work/Projects/mmsegmentation/data\\dataset\\mmseg_orga/cropped\\ann_dir\\test'
+        ),
+        data_root=
+        'C:/Users/aphimaneso/Work/Projects/mmsegmentation/data\\dataset\\mmseg_orga/cropped',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(keep_ratio=True, scale=(
+                512,
+                512,
+            ), type='Resize'),
+            dict(type='LoadAnnotations'),
+            dict(type='PackSegInputs'),
+        ],
+        type='SkyDetectionDataset'),
+    num_workers=4,
+    persistent_workers=True,
+    sampler=dict(shuffle=False, type='DefaultSampler'))
+test_evaluator = dict(
+    iou_metrics=[
+        'mIoU',
+    ], type='IoUMetric')
+test_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(keep_ratio=True, scale=(
+        512,
+        512,
+    ), type='Resize'),
+    dict(type='LoadAnnotations'),
+    dict(type='PackSegInputs'),
+]
+train_cfg = dict(max_iters=250, type='IterBasedTrainLoop', val_interval=250)
+train_dataloader = dict(
+    batch_size=8,
+    dataset=dict(
+        data_prefix=dict(
+            img_path=
+            'C:/Users/aphimaneso/Work/Projects/mmsegmentation/data\\dataset\\mmseg_orga/cropped\\img_dir\\train',
+            seg_map_path=
+            'C:/Users/aphimaneso/Work/Projects/mmsegmentation/data\\dataset\\mmseg_orga/cropped\\ann_dir\\train'
+        ),
+        data_root=
+        'C:/Users/aphimaneso/Work/Projects/mmsegmentation/data\\dataset\\mmseg_orga/cropped',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(type='LoadAnnotations'),
+            dict(
+                keep_ratio=True,
+                ratio_range=(
+                    0.5,
+                    2.0,
+                ),
+                scale=(
+                    512,
+                    512,
+                ),
+                type='RandomResize'),
+            dict(
+                degree=180,
+                pad_val=0,
+                prob=1,
+                seg_pad_val=0,
+                type='RandomRotate'),
+            dict(prob=0.5, type='RandomFlip'),
+            dict(cat_max_ratio=1.0, crop_size=(
+                256,
+                256,
+            ), type='RandomCrop'),
+            dict(type='PackSegInputs'),
+        ],
+        type='SkyDetectionDataset'),
+    num_workers=4,
+    persistent_workers=True,
+    sampler=dict(shuffle=True, type='InfiniteSampler'))
+train_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(type='LoadAnnotations'),
+    dict(
+        keep_ratio=True,
+        ratio_range=(
+            0.5,
+            2.0,
+        ),
+        scale=(
+            512,
+            512,
+        ),
+        type='RandomResize'),
+    dict(degree=180, pad_val=0, prob=1, seg_pad_val=0, type='RandomRotate'),
+    dict(prob=0.5, type='RandomFlip'),
+    dict(cat_max_ratio=1.0, crop_size=(
+        256,
+        256,
+    ), type='RandomCrop'),
+    dict(type='PackSegInputs'),
+]
+tta_model = dict(type='SegTTAModel')
+tta_pipeline = [
+    dict(backend_args=None, type='LoadImageFromFile'),
+    dict(
+        transforms=[
+            [
+                dict(keep_ratio=True, scale_factor=0.5, type='Resize'),
+                dict(keep_ratio=True, scale_factor=0.75, type='Resize'),
+                dict(keep_ratio=True, scale_factor=1.0, type='Resize'),
+                dict(keep_ratio=True, scale_factor=1.25, type='Resize'),
+                dict(keep_ratio=True, scale_factor=1.5, type='Resize'),
+                dict(keep_ratio=True, scale_factor=1.75, type='Resize'),
+            ],
+            [
+                dict(direction='horizontal', prob=0.0, type='RandomFlip'),
+                dict(direction='horizontal', prob=1.0, type='RandomFlip'),
+            ],
+            [
+                dict(type='LoadAnnotations'),
+            ],
+            [
+                dict(type='PackSegInputs'),
+            ],
+        ],
+        type='TestTimeAug'),
+]
+val_cfg = dict(type='ValLoop')
+val_dataloader = dict(
+    batch_size=1,
+    dataset=dict(
+        data_prefix=dict(
+            img_path=
+            'C:/Users/aphimaneso/Work/Projects/mmsegmentation/data\\dataset\\mmseg_orga/cropped\\img_dir\\test',
+            seg_map_path=
+            'C:/Users/aphimaneso/Work/Projects/mmsegmentation/data\\dataset\\mmseg_orga/cropped\\ann_dir\\test'
+        ),
+        data_root=
+        'C:/Users/aphimaneso/Work/Projects/mmsegmentation/data\\dataset\\mmseg_orga/cropped',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(keep_ratio=True, scale=(
+                512,
+                512,
+            ), type='Resize'),
+            dict(type='LoadAnnotations'),
+            dict(type='PackSegInputs'),
+        ],
+        type='SkyDetectionDataset'),
+    num_workers=4,
+    persistent_workers=True,
+    sampler=dict(shuffle=False, type='DefaultSampler'))
+val_evaluator = dict(
+    iou_metrics=[
+        'mIoU',
+    ], type='IoUMetric')
+vis_backends = [
+    dict(type='LocalVisBackend'),
+]
+visualizer = dict(
+    name='visualizer',
+    type='SegLocalVisualizer',
+    vis_backends=[
+        dict(type='LocalVisBackend'),
+    ])
+work_dir = 'C:/Users/aphimaneso/Work/Projects/mmsegmentation/data\\Training/0610-1109'
+
+C:\Users\aphimaneso\Work\Projects\mmsegmentation\mmsegmentation\lib\site-packages\mmseg\models\builder.py:36: UserWarning: ``build_loss`` would be deprecated soon, please use ``mmseg.registry.MODELS.build()``
+  warnings.warn('``build_loss`` would be deprecated soon, please use '
+C:\Users\aphimaneso\Work\Projects\mmsegmentation\mmsegmentation\lib\site-packages\mmseg\models\losses\cross_entropy_loss.py:250: UserWarning: Default ``avg_non_ignore`` is False, if you would like to ignore the certain label and average loss over non-ignore labels, which is the same with PyTorch official cross_entropy, set ``avg_non_ignore=True``.
+  warnings.warn(
+06/10 11:09:49 - mmengine - INFO - Distributed training is not used, all SyncBatchNorm (SyncBN) layers in the model will be automatically reverted to BatchNormXd layers if they are used.
+C:\Users\aphimaneso\Work\Projects\mmsegmentation\mmsegmentation\lib\site-packages\mmseg\engine\hooks\visualization_hook.py:60: UserWarning: The draw is False, it means that the hook for visualization will not take effect. The results will NOT be visualized or stored.
+  warnings.warn('The draw is False, it means that the '
+06/10 11:09:49 - mmengine - INFO - Hooks will be executed in the following order:
+before_run:
+(VERY_HIGH   ) RuntimeInfoHook
+(BELOW_NORMAL) LoggerHook
+ --------------------
+before_train:
+(VERY_HIGH   ) RuntimeInfoHook
+(NORMAL      ) IterTimerHook
+(VERY_LOW    ) CheckpointHook
+ --------------------
+before_train_epoch:
+(VERY_HIGH   ) RuntimeInfoHook
+(NORMAL      ) IterTimerHook
+(NORMAL      ) DistSamplerSeedHook
+ --------------------
+before_train_iter:
+(VERY_HIGH   ) RuntimeInfoHook
+(NORMAL      ) IterTimerHook
+ --------------------
+after_train_iter:
+(VERY_HIGH   ) RuntimeInfoHook
+(NORMAL      ) IterTimerHook
+(NORMAL      ) SegVisualizationHook
+(BELOW_NORMAL) LoggerHook
+(LOW         ) ParamSchedulerHook
+(VERY_LOW    ) CheckpointHook
+ --------------------
+after_train_epoch:
+(NORMAL      ) IterTimerHook
+(LOW         ) ParamSchedulerHook
+(VERY_LOW    ) CheckpointHook
+ --------------------
+before_val:
+(VERY_HIGH   ) RuntimeInfoHook
+ --------------------
+before_val_epoch:
+(NORMAL      ) IterTimerHook
+ --------------------
+before_val_iter:
+(NORMAL      ) IterTimerHook
+ --------------------
+after_val_iter:
+(NORMAL      ) IterTimerHook
+(NORMAL      ) SegVisualizationHook
+(BELOW_NORMAL) LoggerHook
+ --------------------
+after_val_epoch:
+(VERY_HIGH   ) RuntimeInfoHook
+(NORMAL      ) IterTimerHook
+(BELOW_NORMAL) LoggerHook
+(LOW         ) ParamSchedulerHook
+(VERY_LOW    ) CheckpointHook
+ --------------------
+after_val:
+(VERY_HIGH   ) RuntimeInfoHook
+ --------------------
+after_train:
+(VERY_HIGH   ) RuntimeInfoHook
+(VERY_LOW    ) CheckpointHook
+ --------------------
+before_test:
+(VERY_HIGH   ) RuntimeInfoHook
+ --------------------
+before_test_epoch:
+(NORMAL      ) IterTimerHook
+ --------------------
+before_test_iter:
+(NORMAL      ) IterTimerHook
+ --------------------
+after_test_iter:
+(NORMAL      ) IterTimerHook
+(NORMAL      ) SegVisualizationHook
+(BELOW_NORMAL) LoggerHook
+ --------------------
+after_test_epoch:
+(VERY_HIGH   ) RuntimeInfoHook
+(NORMAL      ) IterTimerHook
+(BELOW_NORMAL) LoggerHook
+ --------------------
+after_test:
+(VERY_HIGH   ) RuntimeInfoHook
+ --------------------
+after_run:
+(BELOW_NORMAL) LoggerHook
+ --------------------
+Current timestamp: 0610-1109
+Current timestamp: 0610-1110
+Current timestamp: 0610-1110
+Current timestamp: 0610-1110
+06/10 11:10:20 - mmengine - WARNING - The prefix is not set in metric class IoUMetric.
+Loads checkpoint by local backend from path: mmseg/configs/unet/fcn_unet_s5-d16_4x4_512x1024_160k_cityscapes_20211210_145204-6860854e.pth
+The model and loaded state dict do not match exactly
+
+size mismatch for decode_head.conv_seg.weight: copying a param with shape torch.Size([19, 64, 1, 1]) from checkpoint, the shape in current model is torch.Size([2, 64, 1, 1]).
+size mismatch for decode_head.conv_seg.bias: copying a param with shape torch.Size([19]) from checkpoint, the shape in current model is torch.Size([2]).
+size mismatch for auxiliary_head.conv_seg.weight: copying a param with shape torch.Size([19, 64, 1, 1]) from checkpoint, the shape in current model is torch.Size([2, 64, 1, 1]).
+size mismatch for auxiliary_head.conv_seg.bias: copying a param with shape torch.Size([19]) from checkpoint, the shape in current model is torch.Size([2]).
+06/10 11:10:24 - mmengine - INFO - Load checkpoint from mmseg/configs/unet/fcn_unet_s5-d16_4x4_512x1024_160k_cityscapes_20211210_145204-6860854e.pth
+06/10 11:10:24 - mmengine - WARNING - "FileClient" will be deprecated in future. Please use io functions in https://mmengine.readthedocs.io/en/latest/api/fileio.html#file-io
+06/10 11:10:24 - mmengine - WARNING - "HardDiskBackend" is the alias of "LocalBackend" and the former will be deprecated in future.
+06/10 11:10:24 - mmengine - INFO - Checkpoints will be saved to C:\Users\aphimaneso\Work\Projects\mmsegmentation\data\Training\0610-1109.
+06/10 11:43:14 - mmengine - INFO - Iter(train) [ 25/250]  lr: 9.9987e-03  eta: 4:55:30  time: 82.1682  data_time: 0.0100  loss: 0.4182  decode.loss_ce: 0.2796  decode.acc_seg: 90.7974  aux.loss_ce: 0.1386  aux.acc_seg: 90.0242
+06/10 11:47:55 - mmengine - INFO - Exp name: unet-s5-d16_fcn_4xb4-160k_cityscapes-512x1024_20240610_110933
+06/10 12:14:03 - mmengine - INFO - Iter(train) [ 50/250]  lr: 9.9973e-03  eta: 4:14:37  time: 77.8285  data_time: 0.0077  loss: 0.2408  decode.loss_ce: 0.1707  decode.acc_seg: 89.7411  aux.loss_ce: 0.0700  aux.acc_seg: 91.5110
+06/10 12:14:03 - mmengine - INFO - Saving checkpoint at 50 iterations06/10 12:39:19 - mmengine - INFO - Iter(train) [ 75/250]  lr: 9.9959e-03  eta: 3:27:29  time: 60.4869  data_time: 0.0054  loss: 0.2382  decode.loss_ce: 0.1687  decode.acc_seg: 90.7352  aux.loss_ce: 0.0695  aux.acc_seg: 90.1587
+06/10 13:04:24 - mmengine - INFO - Iter(train) [100/250]  lr: 9.9945e-03  eta: 2:51:00  time: 60.1004  data_time: 0.0053  loss: 0.3008  decode.loss_ce: 0.2159  decode.acc_seg: 84.2598  aux.loss_ce: 0.0849  aux.acc_seg: 87.8313
+06/10 13:04:24 - mmengine - INFO - Saving checkpoint at 100 iterations
+06/10 13:32:17 - mmengine - INFO - Iter(train) [125/250]  lr: 9.9931e-03  eta: 2:21:53  time: 66.6691  data_time: 0.0058  loss: 0.2501  decode.loss_ce: 0.1767  decode.acc_seg: 95.3180  aux.loss_ce: 0.0734  aux.acc_seg: 95.3142
+06/10 14:00:24 - mmengine - INFO - Iter(train) [150/250]  lr: 9.9917e-03  eta: 1:53:20  time: 69.0424  data_time: 0.0064  loss: 0.2473  decode.loss_ce: 0.1740  decode.acc_seg: 92.5640  aux.loss_ce: 0.0733  aux.acc_seg: 92.2184
+06/10 14:00:24 - mmengine - INFO - Saving checkpoint at 150 iterations
+06/10 14:29:43 - mmengine - INFO - Iter(train) [175/250]  lr: 9.9903e-03  eta: 1:25:25  time: 67.8682  data_time: 0.0057  loss: 0.2301  decode.loss_ce: 0.1630  decode.acc_seg: 94.8668  aux.loss_ce: 0.0671  aux.acc_seg: 95.2431
+06/10 14:56:53 - mmengine - INFO - Iter(train) [200/250]  lr: 9.9889e-03  eta: 0:56:37  time: 65.1166  data_time: 0.0047  loss: 0.2162  decode.loss_ce: 0.1525  decode.acc_seg: 93.8623  aux.loss_ce: 0.0637  aux.acc_seg: 93.6043
+06/10 14:56:53 - mmengine - INFO - Saving checkpoint at 200 iterations
+06/10 15:24:36 - mmengine - INFO - Iter(train) [225/250]  lr: 9.9875e-03  eta: 0:28:14  time: 64.7865  data_time: 0.0056  loss: 0.2150  decode.loss_ce: 0.1519  decode.acc_seg: 88.5925  aux.loss_ce: 0.0631  aux.acc_seg: 89.4516
+06/10 15:52:11 - mmengine - INFO - Iter(train) [250/250]  lr: 9.9861e-03  eta: 0:00:00  time: 68.2749  data_time: 0.0071  loss: 0.2544  decode.loss_ce: 0.1795  decode.acc_seg: 91.8999  aux.loss_ce: 0.0749  aux.acc_seg: 91.2937
+06/10 15:52:11 - mmengine - INFO - Saving checkpoint at 250 iterations
+Current timestamp: 0610-1553
+Current timestamp: 0610-1553
+Current timestamp: 0610-1553
+Current timestamp: 0610-1553
+06/10 16:01:43 - mmengine - INFO - per class results:
+06/10 16:01:43 - mmengine - INFO -
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 91.37 | 91.93 |
+| nonsky |  87.8 | 99.04 |
++--------+-------+-------+
+06/10 16:01:43 - mmengine - INFO - Iter(val) [20/20]    aAcc: 94.6800  mIoU: 89.5900  mAcc: 95.4800  data_time: 2.3878  time: 28.4320

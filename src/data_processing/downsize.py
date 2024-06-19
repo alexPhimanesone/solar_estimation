@@ -24,7 +24,7 @@ def divide_into_parts(a, b):
     return parts
 
 
-def quantile_extraction(image, resolution, disk_mask, q):
+def quantile_extraction(image, resolution, disk_mask, q, quantile_method):
 
     # Get dims and kernels lists
     if len(image.shape) < 3:
@@ -49,7 +49,7 @@ def quantile_extraction(image, resolution, disk_mask, q):
             region = image[y_start:y_end, x_start:x_end][disk_mask[y_start:y_end, x_start:x_end]]
             if region.size > 0:
                 output_disk_mask[y, x] = 1
-                output[y, x] = np.quantile(region, q, axis=0) # region.shape is (nb_pixels, channel)
+                output[y, x] = np.quantile(region, q, axis=0, method=quantile_method) # region.shape is (nb_pixels, channel)
             else:
                 output[y, x] = np.zeros(channel)
 

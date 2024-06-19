@@ -1,1 +1,0 @@
-{"id_pprad_list": [0, 4, 3, 4, 0, 4, 2, 5, 3, 6, 1], "pool_kernel": 5, "batch_sizes": {"train": 2, "val": 1, "test": 1}, "alpha_leaky": 0.1, "loss": "BCEWithLogits", "epochs": 5, "min_delta": 0, "initial_lr": 0.01, "lr_patience": 5, "lr_factor": 0.8, "lr_min": 5e-06, "stop_patience": 70}

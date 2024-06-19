@@ -33,7 +33,7 @@ def get_id_endroit(id_pic=None, id_mask=None):
         for row in data:
             if row['id_mask'] == id_mask:
                 id_pic = row['id_pic']
-            break
+                break
 
     id_endroit = read_csv(os.path.join(metadata_dir, "pics_metadata.csv"), id_pic, "id_endroit")
     return id_endroit

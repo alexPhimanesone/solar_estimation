@@ -1,18 +1,25 @@
 import os
+from os.path import join as opj
 import sys
 import numpy as np
+import torch
 import cv2
 import csv
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
+    'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/ai/')))
 
 data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
-dataset_dir  = os.path.join(data_dir, "dataset/")
-pics_dir     = os.path.join(dataset_dir, "pics/")
-pprads_dir   = os.path.join(dataset_dir, "pprads/")
-masks_dir    = os.path.join(dataset_dir, "masks/")
-metadata_dir = os.path.join(dataset_dir, "metadata/")
-checks_dir   = os.path.join(data_dir, "checks/")
-zoom_dir     = os.path.join(checks_dir, "zoom/")
-channel_dir  = os.path.join(checks_dir, "channel/")
+dataset_dir   = os.path.join(data_dir   , "dataset/")
+pics_dir      = os.path.join(dataset_dir, "pics/")
+pprads_dir    = os.path.join(dataset_dir, "pprads/")
+masks_dir     = os.path.join(dataset_dir, "masks/")
+metadata_dir  = os.path.join(dataset_dir, "metadata/")
+preloaded_dir = os.path.join(dataset_dir, "preloaded/")
+checks_dir    = os.path.join(data_dir   , "checks/")
+zoom_dir      = os.path.join(checks_dir , "zoom/")
+channel_dir   = os.path.join(checks_dir , "channel/")
+training_dir  = os.path.join(data_dir   , "Training/")
+
 
 
 def read_raw_image(img_path, width=None, height=None, dtype='uint8'):
@@ -133,7 +140,6 @@ def write_hp(save_dir, hp):
 
 
 def get_device():
-    import torch
     device = ("cuda" if torch.cuda.is_available()
      else "mps" if torch.backends.mps.is_available()
      else "cpu")
@@ -141,23 +147,67 @@ def get_device():
     return device
 
 
-def str_to_loss(loss_name):
-    import torch
-    loss = None
-    if loss_name == 'BCEWithLogits':
-        loss = torch.nn.BCEWithLogitsLoss()
-    return loss
+def np_to_torch(arr, batched=None):
+    if len(arr.shape) == 3 and batched is None:
+        arr = np.transpose(arr, (2, 0, 1)) # (c, h, w)
+    if len(arr.shape) == 4:
+        arr = np.transpose(arr, (0, 3, 1, 2))
+    tensor = torch.from_numpy(arr).to(torch.float32)
+    return tensor
 
 
-def np_to_torch(im):
-    import torch
-    return torch.from_numpy(np.transpose(im, (2, 0, 1))).to(torch.float32)
+def torch_to_np(tensor, batched=None):
+    arr = tensor.detach().numpy()
+    if len(arr.shape) == 3 and batched is None:
+        arr = np.transpose(arr, (1, 2, 0)) # (h, w, c)
+    if len(arr.shape) == 4:
+        arr = np.transpose(arr, (0, 2, 3, 1))
+    return arr
 
 
 def val_empty(root_dir):
     pics_dir = os.path.join(root_dir, "pics/")
     val_dir  = os.path.join(pics_dir, "val/")
-    if os.listdir(val_dir) is None:
+    listval = os.listdir(val_dir)
+    if listval is None or len(listval) == 0:
         return True
     else:
         return False
+
+
+def get_model_path(str_date_time, epoch=None):
+    save_dir = os.path.join(training_dir, str_date_time)
+    if not(epoch is None):
+        if isinstance(epoch, int):
+            model_fn = f"model{epoch}.pt"
+        if epoch == 'last':
+            i = -1
+            while os.path.exists(os.path.join(save_dir, f"model{i+1}.pt")): # ie "there's more after this one"
+                i += 1
+            model_fn = f"model{i}.pt"
+    else:
+        model_fn = "model.pt"
+    model_path = os.path.join(save_dir, model_fn)
+    return model_path
+
+
+def get_last_model_path(train_timestamp):
+    import re
+    train_dir = opj(training_dir, train_timestamp)
+    list_model_fn = [fn for fn in os.listdir(train_dir) if fn.endswith(".pth")]
+    last_iter = 0
+    for model_fn in list_model_fn:
+        start = model_fn.find('_') + 1
+        end = model_fn.find('.')
+        iter = model_fn[start:end]
+        if int(iter) > last_iter:
+            last_iter = int(iter)
+    last_model_fn = f"iter_{last_iter}.pth"
+    last_model_path = opj(train_dir, last_model_fn)
+    return last_model_path
+
+
+def squeeze_mask(mask_3d):
+    mask_2d = mask_3d[:, :, 0]
+    mask_2d = mask_2d // 255
+    return mask_2d

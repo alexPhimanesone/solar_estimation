@@ -1,6 +1,9 @@
 import os
+from os.path import join as opj
 import sys
+import numpy as np
 import torch
+import json
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
     'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/data_processing')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
@@ -9,8 +12,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
     'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/ai')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
     'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/sky_detection')))
-from load import draw_id_pprad_list
-from utils import read_raw_image, write_raw_image, path_raw_to_jpg, get_height_width
+from losses import construct_loss
+from utils import read_raw_image, write_raw_image, path_raw_to_jpg, get_model_path
 
 data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
 masking_dir   = os.path.join(data_dir     , "masking/")
@@ -20,8 +23,10 @@ pics_dir      = os.path.join(dataset_dir  , "pics/")
 pprads_dir    = os.path.join(dataset_dir  , "pprads/")
 masks_dir     = os.path.join(dataset_dir  , "masks/")
 metadata_dir  = os.path.join(dataset_dir  , "metadata/")
+preloaded_dir = os.path.join(dataset_dir  , "preloaded/")
 zoom_dir      = os.path.join(checks_dir   , "zoom/")
 channel_dir   = os.path.join(checks_dir   , "channel/")
+training_dir  = os.path.join(data_dir     , "Training/")
 inference_dir = os.path.join(data_dir     , "Inference/")
 in_dir        = os.path.join(inference_dir, "in/")
 
@@ -30,18 +35,31 @@ in_dir        = os.path.join(inference_dir, "in/")
 #                       SKY_DETECTION
 #=================================================================
 
-#'''
-from train import train
+'''
+#WRITE_PERF
 from utils import get_device
+from perf import write_perf
+
+str_date_time = "0427-1704"
+epoch = 92
+subdir = 'train'
+
+write_perf(get_device(), str_date_time, epoch, subdir)
+'''
+
+'''
+#TRAIN
+from train import train
+
 
 # HYPERPARAM
 hp = {}
-hp['id_pprad_list'] = draw_id_pprad_list().tolist()
-hp['pool_kernel']   = 5
-hp['batch_sizes']   = {'train': 2, 'val': 1, 'test': 1}
+hp['resolution']    = (512, 512)
+hp['qm']            = 250
+hp['batch_sizes']   = {'train': 16, 'val': 16, 'test': 16}
 hp['alpha_leaky']   = 0.1
-hp['loss']          = 'BCEWithLogits'
-hp['epochs']        = 2
+hp['loss']          = 'BCEWithLogits_disk'
+hp['epochs']        = 200
 hp['min_delta']     = 0
 hp['initial_lr']    = 1e-2
 hp['lr_patience']   = 5
@@ -49,19 +67,79 @@ hp['lr_factor']     = 0.8
 hp['lr_min']        = 5e-6
 hp['stop_patience'] = 70
 
-pics_masks_dataset = train(get_device(), in_dir, hp)
-#'''
+train(get_device(), hp)
+'''
+
+'''
+#PRELOAD
+from preload import preload
+resolution = (512, 512)
+qm = 250
+preload(resolution, qm)
+'''
+
+'''
+#INSPECT_MASK_DICT
+import pickle
+import matplotlib.pyplot as plt
+resolution = (512, 512)
+qm = 250
+rqm_dir = os.path.join(preloaded_dir, f"{resolution[0]}x{resolution[1]}_qm{qm}/")
+with open(os.path.join(rqm_dir, "mask_dict.pkl"), 'rb') as f:
+    mask_dict = pickle.load(f)
+for key in mask_dict.keys():
+    print(str(key))
+    print(mask_dict[key].shape)
+    print(np.unique(mask_dict[key]))
+    plt.figure()
+    plt.imshow(mask_dict[key])
+    plt.show()
+'''
 
 
 #=================================================================
 #                       MMSEGMENTATION
 #=================================================================
 
+#'''
+#GET_SCORE
+from inference import get_cm_arr
+print("get_score starts running")
+cm_arr = get_cm_arr()
+np.save(opj(training_dir, "0610-1109", "cm_arr.npy"), cm_arr)
+#'''
+
+
 '''
-import numpy as np
+#COMPUTE_METRICS
+from inference import compute_metrics
+cm_arr = np.load(opj(training_dir, "0610-1109", "cm_arr.npy"))
+print(np.unique(cm_arr))
+precision, recall, f1_score, global_accuracy = compute_metrics(cm_arr)
+print(f'Total Precision: {precision:.4f}')
+print(f'Total Recall: {recall:.4f}')
+print(f'Total F1 Score: {f1_score:.4f}')
+print(f'Total Global Accuracy: {global_accuracy:.4f}')
+'''
+
+
+'''
+#SEE_PREDS
+from inference import see_preds
+print("see_preds starts running")
+preds = see_preds()
+'''
+
+'''
+#INSPECT_DIMS
+from inference import inspect_dims
+inspect_dims()
+'''
+
+'''
+# INFERENCE
 import matplotlib.pyplot as plt
 import cv2
-import json
 from crop_around_disk import crop_around_disk, get_disk_mask
 from downsize import quantile_pooling
 from metrics import confusion_mat_rates, acc, plot_cm
@@ -113,6 +191,8 @@ for file_name in os.listdir(in_dir):
     fig_path = os.path.join(out_dir, f"fig{id_pic}.png")
     plot_cm(pred, mask, disk_mask, fig_path)
 '''
+
+
 
 
 #=================================================================

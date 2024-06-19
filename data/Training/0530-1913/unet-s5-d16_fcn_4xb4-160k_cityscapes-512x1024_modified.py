@@ -1,6 +1,6 @@
 crop_size = (
-    512,
-    1024,
+    256,
+    256,
 )
 data_preprocessor = dict(
     bgr_to_rgb=True,
@@ -21,11 +21,11 @@ data_preprocessor = dict(
         57.375,
     ],
     type='SegDataPreProcessor')
-data_root = 'data/cityscapes/'
-dataset_type = 'CityscapesDataset'
+data_root = 'C:/Users/aphimaneso/Work/Projects/mmsegmentation/data\\dataset\\mmseg_orga/'
+dataset_type = 'SkyDetectionDataset'
 default_hooks = dict(
-    checkpoint=dict(by_epoch=False, interval=16000, type='CheckpointHook'),
-    logger=dict(interval=50, log_metric_by_epoch=False, type='LoggerHook'),
+    checkpoint=dict(by_epoch=False, interval=230, type='CheckpointHook'),
+    logger=dict(interval=10, log_metric_by_epoch=False, type='LoggerHook'),
     param_scheduler=dict(type='ParamSchedulerHook'),
     sampler_seed=dict(type='DistSamplerSeedHook'),
     timer=dict(type='IterTimerHook'),
@@ -43,7 +43,7 @@ img_ratios = [
     1.5,
     1.75,
 ]
-load_from = None
+load_from = 'mmseg/configs/unet/fcn_unet_s5-d16_4x4_512x1024_160k_cityscapes_20211210_145204-6860854e.pth'
 log_level = 'INFO'
 log_processor = dict(by_epoch=False)
 model = dict(
@@ -56,9 +56,10 @@ model = dict(
         in_index=3,
         loss_decode=dict(
             loss_weight=0.4, type='CrossEntropyLoss', use_sigmoid=False),
-        norm_cfg=dict(requires_grad=True, type='SyncBN'),
-        num_classes=19,
+        norm_cfg=dict(requires_grad=True, type='BN'),
+        num_classes=2,
         num_convs=1,
+        out_channels=2,
         type='FCNHead'),
     backbone=dict(
         act_cfg=dict(type='ReLU'),
@@ -97,7 +98,7 @@ model = dict(
             2,
         ),
         in_channels=3,
-        norm_cfg=dict(requires_grad=True, type='SyncBN'),
+        norm_cfg=dict(requires_grad=True, type='BN'),
         norm_eval=False,
         num_stages=5,
         strides=(
@@ -120,8 +121,8 @@ model = dict(
         pad_val=0,
         seg_pad_val=255,
         size=(
-            512,
-            1024,
+            256,
+            256,  #padding size
         ),
         std=[
             58.395,
@@ -138,15 +139,17 @@ model = dict(
         in_index=4,
         loss_decode=dict(
             loss_weight=1.0, type='CrossEntropyLoss', use_sigmoid=False),
-        norm_cfg=dict(requires_grad=True, type='SyncBN'),
-        num_classes=19,
+        norm_cfg=dict(requires_grad=True, type='BN'),
+        num_classes=2,
         num_convs=1,
+        out_channels=2,
         type='FCNHead'),
     pretrained=None,
-    test_cfg=dict(crop_size=256, mode='whole', stride=170),
+    #test_cfg=dict(crop_size=256, mode='whole', stride=170),
+    test_cfg=dict(crop_size=(256, 256), mode='slide', stride=(170, 170)),
     train_cfg=dict(),
     type='EncoderDecoder')
-norm_cfg = dict(requires_grad=True, type='SyncBN')
+norm_cfg = dict(requires_grad=True, type='BN')
 optim_wrapper = dict(
     clip_grad=None,
     optimizer=dict(lr=0.01, momentum=0.9, type='SGD', weight_decay=0.0005),
@@ -161,24 +164,30 @@ param_scheduler = [
         power=0.9,
         type='PolyLR'),
 ]
+randomness = dict(seed=0)
 resume = False
 test_cfg = dict(type='TestLoop')
 test_dataloader = dict(
     batch_size=1,
     dataset=dict(
         data_prefix=dict(
-            img_path='leftImg8bit/val', seg_map_path='gtFine/val'),
-        data_root='data/cityscapes/',
+            img_path=
+            'C:/Users/aphimaneso/Work/Projects/mmsegmentation/data\\dataset\\mmseg_orga/img_dir\\test',
+            seg_map_path=
+            'C:/Users/aphimaneso/Work/Projects/mmsegmentation/data\\dataset\\mmseg_orga/ann_dir\\test'
+        ),
+        data_root=
+        'C:/Users/aphimaneso/Work/Projects/mmsegmentation/data\\dataset\\mmseg_orga/',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(keep_ratio=True, scale=(
-                2048,
-                1024,
+                512,
+                512,
             ), type='Resize'),
             dict(type='LoadAnnotations'),
             dict(type='PackSegInputs'),
         ],
-        type='CityscapesDataset'),
+        type='SkyDetectionDataset'),
     num_workers=4,
     persistent_workers=True,
     sampler=dict(shuffle=False, type='DefaultSampler'))
@@ -189,20 +198,24 @@ test_evaluator = dict(
 test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(keep_ratio=True, scale=(
-        2048,
-        1024,
+        512,
+        512,
     ), type='Resize'),
     dict(type='LoadAnnotations'),
     dict(type='PackSegInputs'),
 ]
-train_cfg = dict(
-    max_iters=160000, type='IterBasedTrainLoop', val_interval=16000)
+train_cfg = dict(max_iters=230, type='IterBasedTrainLoop', val_interval=230)
 train_dataloader = dict(
-    batch_size=4,
+    batch_size=8,
     dataset=dict(
         data_prefix=dict(
-            img_path='leftImg8bit/train', seg_map_path='gtFine/train'),
-        data_root='data/cityscapes/',
+            img_path=
+            'C:/Users/aphimaneso/Work/Projects/mmsegmentation/data\\dataset\\mmseg_orga/img_dir\\train',
+            seg_map_path=
+            'C:/Users/aphimaneso/Work/Projects/mmsegmentation/data\\dataset\\mmseg_orga/ann_dir\\train'
+        ),
+        data_root=
+        'C:/Users/aphimaneso/Work/Projects/mmsegmentation/data\\dataset\\mmseg_orga/',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(type='LoadAnnotations'),
@@ -213,20 +226,18 @@ train_dataloader = dict(
                     2.0,
                 ),
                 scale=(
-                    2048,
-                    1024,
+                    512,
+                    512, # attention à avoir assez de contexte
                 ),
                 type='RandomResize'),
-            dict(
-                cat_max_ratio=0.75, crop_size=(
-                    512,
-                    1024,
-                ), type='RandomCrop'),
+            dict(cat_max_ratio=1.0, crop_size=(
+                256,
+                256,
+            ), type='RandomCrop'),
             dict(prob=0.5, type='RandomFlip'),
-            dict(type='PhotoMetricDistortion'),
             dict(type='PackSegInputs'),
         ],
-        type='CityscapesDataset'),
+        type='SkyDetectionDataset'),
     num_workers=4,
     persistent_workers=True,
     sampler=dict(shuffle=True, type='InfiniteSampler'))
@@ -240,16 +251,15 @@ train_pipeline = [
             2.0,
         ),
         scale=(
-            2048,
-            1024,
+            512,
+            512,
         ),
         type='RandomResize'),
-    dict(cat_max_ratio=0.75, crop_size=(
-        512,
-        1024,
+    dict(cat_max_ratio=1.0, crop_size=(
+        256,
+        256,
     ), type='RandomCrop'),
     dict(prob=0.5, type='RandomFlip'),
-    dict(type='PhotoMetricDistortion'),
     dict(type='PackSegInputs'),
 ]
 tta_model = dict(type='SegTTAModel')
@@ -283,18 +293,23 @@ val_dataloader = dict(
     batch_size=1,
     dataset=dict(
         data_prefix=dict(
-            img_path='leftImg8bit/val', seg_map_path='gtFine/val'),
-        data_root='data/cityscapes/',
+            img_path=
+            'C:/Users/aphimaneso/Work/Projects/mmsegmentation/data\\dataset\\mmseg_orga/img_dir\\test',
+            seg_map_path=
+            'C:/Users/aphimaneso/Work/Projects/mmsegmentation/data\\dataset\\mmseg_orga/ann_dir\\test'
+        ),
+        data_root=
+        'C:/Users/aphimaneso/Work/Projects/mmsegmentation/data\\dataset\\mmseg_orga/',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(keep_ratio=True, scale=(
-                2048,
-                1024,
+                512,
+                512,
             ), type='Resize'),
             dict(type='LoadAnnotations'),
             dict(type='PackSegInputs'),
         ],
-        type='CityscapesDataset'),
+        type='SkyDetectionDataset'),
     num_workers=4,
     persistent_workers=True,
     sampler=dict(shuffle=False, type='DefaultSampler'))
@@ -311,3 +326,4 @@ visualizer = dict(
     vis_backends=[
         dict(type='LocalVisBackend'),
     ])
+work_dir = 'C:/Users/aphimaneso/Work/Projects/mmsegmentation/data\\Training/0530-1913'
