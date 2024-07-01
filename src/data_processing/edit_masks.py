@@ -136,15 +136,23 @@ def paint_mask(mask_to_paint_path, mask_painted_path, id_pic, color,
 
 
 def extend_black(mask_path, mask_extended_path, id_pic, radius=3,
-                 y_start=None, y_end=None, x_start=None, x_end=None, show_im=False):
+                 y_start=0, y_end=None, x_start=0, x_end=None, show_im=False):
     
-    # Load and check
+    # Load
     height, width = get_height_width(id_pic)
+    mask = read_raw_image(mask_path, width=width, height=height)
+
+    # Set y_end and x_end if not done
+    if y_end is None:
+        y_end = height
+    if x_end is None:
+        x_end = width
+
+    # Check
     if not(0 <= y_start and y_start <= y_end and y_end <= height and
            0 <= x_start and x_start <= x_end and x_end <= width):
         print("Wrong coordinates")
         sys.exit(1)
-    mask = read_raw_image(mask_path, width=width, height=height)
     
     # Extend in the roi
     mask_roi = mask[y_start:y_end, x_start:x_end]

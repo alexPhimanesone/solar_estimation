@@ -11,12 +11,13 @@ csv_path = os.path.join(metadata_dir, "pics_metadata.csv")
 fields = ["id_pic", "id_mask", "id_endroit"]
 
 nb_args = len(sys.argv) - 1
-if not (nb_args == 3):
-    print("Usage: python rename_pics.py <pp_phone> <ee_endroit> <id_mask>")
+if not (nb_args == 4):
+    print("Usage: python rename_pics.py <pp_phone> <ee_endroit> <id_endroit> <id_mask>")
     sys.exit(1)
 pp_phone = sys.argv[1]
 ee_endroit = sys.argv[2]
-id_mask = sys.argv[3]
+id_endroit = sys.argv[3]
+id_mask = sys.argv[4]
 
 
 # Get id_pic list
@@ -26,7 +27,7 @@ matching_pic_paths = sorted(matching_pic_paths)
 # Format data to write
 data = []
 for pic_path in matching_pic_paths:
-    row = {"id_pic": pic_path[3:10], "id_mask": id_mask, "id_endroit": eval(ee_endroit.lstrip('0'))}
+    row = {"id_pic": pic_path[3:10], "id_mask": id_mask, "id_endroit": id_endroit}
     data.append(row)
 
 # Add rows to csv

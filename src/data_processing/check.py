@@ -104,7 +104,7 @@ def save_checks_mult(id_pic_list, checks_mult_dir_name=None):
     id_pprad = get_id_pprad(id_pic=id_pic_list[0])
     if id_pprad == "-1":
             print("This endroit doesn't have a pprad. Assigning a random pprad with matching phone/lens.")
-            id_pprad = get_random_matching_pprad(id_pic=id_pic_list[0])
+            id_pprad = get_id_pprad(id_pic=id_pic_list[0])
     pprad_path = pprads_dir + f'/pprad{id_pprad}.yml'
 
     if checks_mult_dir_name is None:
@@ -145,9 +145,9 @@ def save_checks_mult(id_pic_list, checks_mult_dir_name=None):
                                     0, pic)
         
         # Save checks in checks_mult_dir
-        cv2.imwrite(os.path.join(checks_mult_dir, id_pic + "0nonsky"    + ".png"), checks['nonsky'])
-        cv2.imwrite(os.path.join(checks_mult_dir, id_pic + "1sky"       + ".png"), checks['sky'])
-        cv2.imwrite(os.path.join(checks_mult_dir, id_pic + "2uncertain" + ".png"), checks['uncertain'])
+        cv2.imwrite(os.path.join(checks_mult_dir, "a" + f"{id_pic}" + ".png"), checks['nonsky'])
+        cv2.imwrite(os.path.join(checks_mult_dir, "b" + f"{id_pic}" + ".png"), checks['sky'])
+        #cv2.imwrite(os.path.join(checks_mult_dir, "c" + f"{id_pic}" + ".png"), checks['uncertain'])
         print(f"Pic {id_pic} saved at {checks_mult_dir}")
 
 
@@ -204,9 +204,10 @@ def check_channel(id_pic):
     blue_image  = np.zeros(pic.shape)
     green_image = np.zeros(pic.shape)
     red_image   = np.zeros(pic.shape)
-    blue_image[:, :, 0]  = pic[:, :, 0]
-    green_image[:, :, 1] = pic[:, :, 1]
-    red_image[:, :, 2]   = pic[:, :, 2]
+    blue_image  = np.reshape(np.repeat(pic[:, :, 0], 3, axis=-1), (pic.shape[0], pic.shape[1], 3))
+    green_image = np.reshape(np.repeat(pic[:, :, 1], 3, axis=-1), (pic.shape[0], pic.shape[1], 3))
+    red_image   = np.reshape(np.repeat(pic[:, :, 2], 3, axis=-1), (pic.shape[0], pic.shape[1], 3))
+    print(red_image.shape)
 
     # Remove previous unicolor images
     file_list = os.listdir(channel_dir)

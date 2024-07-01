@@ -1,5 +1,6 @@
 import sys
 import os
+from os.path import join as opj
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
     'C:/Users/aphimaneso/Work/Projects/mmsegmentation/fisheye_to_equirectangular_v3')))
 import numpy as np
@@ -10,7 +11,7 @@ from colorama import Fore, Style
 import omnicalib as omni
 from calibrate_camera import calibrate_camera
 from camera_coords_to_image_intrinsic import camera_coords_to_image_intrinsic
-from navig_dataset import get_id_pprad
+from navig_dataset import get_id_pprad, read_all_csv
 
 data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
 dataset_dir  = os.path.join(data_dir, "dataset/")
@@ -194,3 +195,16 @@ def get_disk_mask_list(id_pprad_list):
         disk_mask = get_disk_mask(pprad_path)
         disk_mask_list.append(disk_mask)
     return disk_mask_list
+
+
+def check_crop(id_endroit, crop_dir=None):
+    id_pprad = get_id_pprad(id_endroit=id_endroit)
+    data = read_all_csv(os.path.join(metadata_dir, "pics_metadata.csv"))
+    id_pic_list = [row['id_pic'] for row in data if row['id_endroit'] == id_endroit]
+    check_crop_dir = opj(checks_dir, "crop") if crop_dir is None else crop_dir
+    os.mkdir(check_crop_dir)
+    for id_pic in id_pic_list:
+        pic_path = opj(pics_dir, f"pic{id_pic}.jpg")
+        pic = cv2.imread(pic_path)
+        pic_cropped = crop_around_disk(opj(pprads_dir, f"pprad{id_pprad}.yml"), pic)
+        cv2.imwrite(opj(check_crop_dir, f"pic{id_pic}.jpg"), pic_cropped)

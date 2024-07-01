@@ -101,13 +101,13 @@ for key in mask_dict.keys():
 #                       MMSEGMENTATION
 #=================================================================
 
-#'''
+'''
 #GET_SCORE
 from inference import get_cm_arr
 print("get_score starts running")
 cm_arr = get_cm_arr()
 np.save(opj(training_dir, "0610-1109", "cm_arr.npy"), cm_arr)
-#'''
+'''
 
 
 '''
@@ -194,17 +194,16 @@ for file_name in os.listdir(in_dir):
 
 
 
-
 #=================================================================
 #                       MASK ANNOTATION
 #=================================================================
 
-'''
-pp_phone  = "00"
-ee_endroit  = "01"
-iii = "045"
+#'''
+pp_phone  = "01"
+ee_endroit  = "06"
+iii = "014"
 id_pic = pp_phone + ee_endroit + iii
-'''
+#'''
 
 '''
 #SAVE_CHECKS
@@ -217,28 +216,37 @@ save_checks(id_pic)
 '''
 #SAVE_CHECKS_MULT
 from check import save_checks_mult
-from navig_dataset import get_id_pic_list
-in_dir = os.path.join(data_dir, "in/")
-files_names = os.listdir(in_dir)
 id_pic_list = []
-for file_name in files_names:
-    id_pic_list.append(file_name[3:10])
-save_checks_mult(id_pic_list, "in")
+for file_name in os.listdir(opj(dataset_dir, "pics")):
+    id_pic = file_name[3:10]
+    ppee = id_pic[:4]
+    if ppee == "0106":
+        id_pic_list.append(id_pic)
+save_checks_mult(id_pic_list)
 '''
 
 '''
-endroit0 ok
-endroit1 ok
-endroit2 ok
-endroit3 ok
-endroit4 ok
-endroit5 ok
-endroit6 ok
-endroit7 ok
-endroit8 ok
-endroit9 ok
-endroit10 2 37 ok
-endroit10 39 113 ok
+0000 ok
+0001 ok
+0002 ok
+0003 ok
+0004 ok
+0005 ok
+0006 ok
+0007 ok
+0008 ok
+0009 ok
+0010 ok
+0010 ok
+0011 ok
+0012 ok
+0100 ok
+0101 ok
+0102 ok
+0103 ok
+0104 ok
+0105 ok
+0106 ok
 '''
 
 '''
@@ -256,26 +264,44 @@ check_channel(id_pic)
 '''
 #PLOT_RECTANGLE
 from edit_masks import plot_rectangle
-y_min =  485
-x_min = 1000
-y_start = 1153 + y_min
-y_end   = 1181 + y_min
-x_start =  343 + x_min
-x_end   =  403 + x_min
-plot_rectangle(id_pic, y_start, y_end, x_start, x_end)
+y_min =  605
+x_min = 1109
+y_start = 1866 #+ y_min
+y_end   = 1911 #+ y_min
+x_start = 2775 #+ x_min
+x_end   = 2792 #+ x_min
+#plot_rectangle(id_pic, y_start, y_end, x_start, x_end)
+
+import cv2
+import matplotlib.pyplot as plt
+
+# Load pic
+mask_path = os.path.join(masks_dir, "mask0105028.raw")
+mask = read_raw_image(mask_path)
+mask = np.reshape(np.repeat(mask, 3, axis=-1), (3024, 4032, 3))
+print(mask.shape)
+
+# Create mask_rectangle
+thickness = 1
+pic_rectangle = cv2.rectangle(mask, (x_start, y_start), (x_end, y_end), 128, thickness)
+
+# Show mask_rectangle
+plt.figure()
+plt.imshow(pic_rectangle)
+plt.show()
 '''
 
 '''
 #PAINT_MASK
 from edit_masks import paint_mask
-y_min =  485
-x_min = 1000
-y_starts = [1153 + y_min]
-y_ends   = [1181 + y_min]
-x_starts = [ 343 + x_min]
-x_ends   = [ 403 + x_min]
-mask_to_paint_path = os.path.join(masks_dir, "mask0010106.raw")
-mask_painted_path  = os.path.join(masking_dir, "mask_painted0010106.raw")
+y_min =  605
+x_min = 1109
+y_starts = [1866]
+y_ends   = [1911]
+x_starts = [2775]
+x_ends   = [2792]
+mask_to_paint_path = os.path.join(masks_dir, "mask0105028.raw")
+mask_painted_path  = os.path.join(masking_dir, "mask0105028paint.raw")
 paint_mask(mask_to_paint_path, mask_painted_path, id_pic, 'black',
            y_starts, y_ends, x_starts, x_ends, show_im=True)
 '''
@@ -283,16 +309,18 @@ paint_mask(mask_to_paint_path, mask_painted_path, id_pic, 'black',
 '''
 #AND_MASKS
 from edit_masks import and_masks
-mask1_path = os.path.join(masking_dir, "mask_edge0010061.raw")
-mask2_path = os.path.join(masks_dir, "mask0010106.raw")
-mask_and_path = os.path.join(masking_dir, "mask_and0010106.raw")
+id_pic1 = "0106014"
+id_pic2 = "0106016"
+mask1_path = os.path.join(masking_dir, f"mask{id_pic1}th.raw")
+mask2_path = os.path.join(masking_dir, f"mask{id_pic2}edge.raw")
+mask_and_path = os.path.join(masking_dir, f"mask{id_pic}and.raw")
 and_masks(mask1_path, mask2_path, mask_and_path, id_pic, invert1=True, invert2=True, show_im=True)
 '''
 
 '''
 #PLOT_LINE
 from edit_masks import plot_line
-coo = 1587
+coo = 1430
 axis = 'y'
 plot_line(id_pic, coo, axis)
 '''
@@ -311,16 +339,16 @@ join_masks(mask1_path, mask2_path, mask_and_path, id_pic, coo, axis, write_im=Tr
 '''
 #EXTEND_BLACK
 from edit_masks import extend_black
-id_mask = "0010002"
-radius = 4
-y_start =  978
+id_mask = id_pic
+radius = 2
+y_start =  1430
 y_end   = 1100
 x_start = 2144
 x_end   = 2288
-mask_path = os.path.join(masking_dir, f"mask4extended1extended1extended{id_mask}.raw")
-mask_extended_path = os.path.join(masking_dir, f"mask{radius}extended4extended1extended1extended{id_mask}.raw")
+mask_path = os.path.join(masking_dir, f"mask{id_mask}and.raw")
+mask_extended_path = os.path.join(masking_dir, f"mask{id_mask}andext{radius}.raw")
 extend_black(mask_path, mask_extended_path, id_pic, radius=radius,
-             y_start=y_start, y_end=y_end, x_start=x_start, x_end=x_end, show_im=True)
+             show_im=True)
 '''
 
 '''
@@ -335,4 +363,31 @@ mask_patch_path    = os.path.join(masking_dir, "mask_edge_th_bas0009066.raw")
 mask_patched_path  = os.path.join(masking_dir, "mask_patched0009066.raw")
 patch_mask(mask_to_patch_path, mask_patch_path, mask_patched_path, id_pic,
            y_start, y_end, x_start, x_end, show_im=True)
+'''
+
+
+
+#=================================================================
+#                       CALIBRATION
+#=================================================================
+
+#calib_set_path = opj(data_dir, "calibration", "calibs", "calib13")
+
+'''
+#CALIBRATE
+from crop_around_disk import calibrate
+calibrate(calib_set_path)
+'''
+
+'''
+#ESTIMATE_RADIUS
+from crop_around_disk import estimate_radius
+estimate_radius(calib_set_path)
+'''
+
+'''
+#CHECK_CROP
+from crop_around_disk import check_crop
+id_endroit = "18"
+check_crop(id_endroit)
 '''
