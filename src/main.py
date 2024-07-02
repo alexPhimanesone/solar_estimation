@@ -51,7 +51,6 @@ write_perf(get_device(), str_date_time, epoch, subdir)
 #TRAIN
 from train import train
 
-
 # HYPERPARAM
 hp = {}
 hp['resolution']    = (512, 512)
@@ -109,7 +108,6 @@ cm_arr = get_cm_arr()
 np.save(opj(training_dir, "0610-1109", "cm_arr.npy"), cm_arr)
 '''
 
-
 '''
 #COMPUTE_METRICS
 from inference import compute_metrics
@@ -121,7 +119,6 @@ print(f'Total Recall: {recall:.4f}')
 print(f'Total F1 Score: {f1_score:.4f}')
 print(f'Total Global Accuracy: {global_accuracy:.4f}')
 '''
-
 
 '''
 #SEE_PREDS
@@ -198,12 +195,12 @@ for file_name in os.listdir(in_dir):
 #                       MASK ANNOTATION
 #=================================================================
 
-#'''
+'''
 pp_phone  = "01"
 ee_endroit  = "06"
 iii = "014"
 id_pic = pp_phone + ee_endroit + iii
-#'''
+'''
 
 '''
 #SAVE_CHECKS

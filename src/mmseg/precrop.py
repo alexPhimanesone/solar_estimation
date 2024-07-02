@@ -15,6 +15,7 @@ from navig_dataset import get_id_pprad, get_id_endroit, get_id_mask
 data_dir   = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
 data_z_dir = "Z:/Work/Projects/solar_estimation/data/"
 dataset_dir    = opj(data_dir      , "dataset/")
+pics_dir       = opj(dataset_dir   , "pics")
 dataset_z_dir  = opj(data_z_dir    , "dataset/")
 pics_z_dir     = opj(dataset_z_dir , "pics_0606-1153/")
 pprads_dir     = opj(dataset_dir   , "pprads/")
@@ -27,16 +28,27 @@ cropped_dir    = opj(mmseg_orga_dir, "cropped")
 def precrop():
     
     '''
-    # id_pprad_arr
-    id_pprad_list = draw_id_pprad_list()
-    print(id_pprad_list)
-    id_pprad_arr = np.zeros(len(id_pprad_list))
-    for i in range(len(id_pprad_list)):
-        id_pprad_arr[i] = id_pprad_list[i]
-    print(id_pprad_arr.shape)
-    np.save(opj(dataset_dir, "mmseg_orga", "cropped", "id_pprad_arr.npy"), id_pprad_arr)
+    # id_pprad_arr_fin
+
+    # Load old id_pprad_arr
+    id_pprad_arr = np.load(opj(dataset_dir, "mmseg_orga", "cropped", "id_pprad_arr.npy"))
+    print(id_pprad_arr)
+
+    # Build new one
+    id_pprad_list_fin = draw_id_pprad_list()
+    print(id_pprad_list_fin)
+    id_pprad_arr_fin = np.zeros(len(id_pprad_list_fin))
+    for i in range(len(id_pprad_list_fin)):
+        if i < id_pprad_arr.shape[0]:
+            id_pprad_arr_fin[i] = id_pprad_arr[i]
+        else:
+            id_pprad_arr_fin[i] = id_pprad_list_fin[i]
+    print(id_pprad_arr_fin)
+    print(id_pprad_arr_fin.shape)
+    np.save(opj(dataset_dir, "mmseg_orga", "cropped", "id_pprad_arr_fin.npy"), id_pprad_arr_fin)
     '''
 
+    #'''
     # Get id_pprad_list
     id_pprad_arr_path = opj(cropped_dir, "id_pprad_arr.npy")
     id_pprad_arr = np.load(id_pprad_arr_path)
@@ -44,12 +56,13 @@ def precrop():
     for i in range(id_pprad_arr.shape[0]):
         id_pprad_list.append(int(id_pprad_arr[i]))
     print(id_pprad_list)
-
     #'''
+
+    '''
     # img_dir
-    subdir_list = ["test"] #["train/", "test"]
+    subdir_list = ["train/", "test"]
     for subdir in subdir_list:
-        dir = os.path.join(pics_z_dir, subdir)
+        dir = os.path.join(pics_dir, subdir)
         listdir = os.listdir(dir)
         for pic_name in listdir:
             #Get id_pic and pprad
@@ -62,7 +75,7 @@ def precrop():
             pic = crop_around_disk(pprad_path, pic)
             # Write pic
             io.imsave(opj(cropped_dir, "img_dir", subdir, f"{id_pic}.jpg"), pic)
-    #'''
+    '''
 
     '''
     # ann_dir
