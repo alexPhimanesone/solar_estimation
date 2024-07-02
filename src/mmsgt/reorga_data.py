@@ -3,13 +3,13 @@ from os.path import join as opj
 import sys
 import numpy as np
 from PIL import Image
-sys.path.append("C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/")
-sys.path.append("C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/data_processing/")
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')))
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data_processing')))
 from crop_around_disk import crop_around_disk
 from utils import read_raw_image
 from navig_dataset import get_id_mask, get_id_endroit
 
-data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
+data_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data'))
 dataset_dir    = opj(data_dir      , "dataset/")
 pics_dir       = opj(dataset_dir   , "pics/")
 masks_dir      = opj(dataset_dir   , "masks/")

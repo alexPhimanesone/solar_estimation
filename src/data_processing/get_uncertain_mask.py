@@ -3,7 +3,7 @@ import sys
 import numpy as np
 import cv2
 
-data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
+data_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data'))
 checks_dir = os.path.join(data_dir, "checks/")
 
 MAX_VAL = 255

@@ -3,17 +3,15 @@ import sys
 import numpy as np
 import torch
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
-    'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
-    'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/ai/')))
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')))
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'ai')))
 from light_model import LightModel
 from load import createPMDatasets, createPreloadedPMDatasets, createPMDataloaders
 from downsize import MedPool2D
 from losses import construct_loss
 from utils import get_str_date_time, print_logs, write_hp, val_empty
 
-data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
+data_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data'))
 training_dir  = os.path.join(data_dir   , "Training/")
 dataset_dir   = os.path.join(data_dir   , "dataset/")
 preloaded_dir = os.path.join(dataset_dir, "preloaded/")

@@ -6,13 +6,12 @@ from torch.utils.data import Dataset
 import pickle as pkl
 import json
 from skimage import io, transform
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
-    'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/data_processing')))
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data_processing')))
 from crop_around_disk import crop_around_disk, get_disk_mask_list
 from navig_dataset import get_id_pprad, get_id_endroit, get_id_mask
 from utils import read_all_csv, read_raw_image, np_to_torch
 
-data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
+data_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data'))
 dataset_dir   = os.path.join(data_dir   , "dataset/")
 pprads_dir    = os.path.join(dataset_dir, "pprads/")
 metadata_dir  = os.path.join(dataset_dir, "metadata/")

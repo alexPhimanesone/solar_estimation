@@ -9,7 +9,7 @@ from get_uncertain_mask import get_uncertain_mask
 from utils import read_raw_image, read_csv
 from navig_dataset import get_id_mask, get_id_endroit, get_id_pprad, get_id_pic_list
 
-data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
+data_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data'))
 masking_dir  = os.path.join(data_dir   , "masking/")
 dataset_dir  = os.path.join(data_dir   , "dataset/")
 checks_dir   = os.path.join(data_dir   , "checks/")

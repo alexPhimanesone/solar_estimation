@@ -3,15 +3,15 @@ import sys
 import random
 from utils import read_csv, read_all_csv
 
-data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
-dataset_dir  = os.path.join(data_dir, "dataset/")
+data_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data'))
+dataset_dir  = os.path.join(data_dir   , "dataset/")
 pics_dir     = os.path.join(dataset_dir, "pics/")
 pprads_dir   = os.path.join(dataset_dir, "pprads/")
 masks_dir    = os.path.join(dataset_dir, "masks/")
 metadata_dir = os.path.join(dataset_dir, "metadata/")
-checks_dir   = os.path.join(data_dir, "checks/")
-zoom_dir     = os.path.join(checks_dir, "zoom/")
-channel_dir  = os.path.join(checks_dir, "channel/")
+checks_dir   = os.path.join(data_dir   , "checks/")
+zoom_dir     = os.path.join(checks_dir , "zoom/")
+channel_dir  = os.path.join(checks_dir , "channel/")
 
 
 def get_id_mask(id_pic=None):

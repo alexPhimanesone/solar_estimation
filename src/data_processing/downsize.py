@@ -4,7 +4,7 @@ import numpy as np
 import torch.nn as nn
 import matplotlib.pyplot as plt
 
-data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
+data_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data'))
 dataset_dir  = os.path.join(data_dir   , "dataset/")
 pics_dir     = os.path.join(dataset_dir, "pics/")
 pprads_dir   = os.path.join(dataset_dir, "pprads/")

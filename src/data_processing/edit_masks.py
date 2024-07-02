@@ -5,7 +5,7 @@ import cv2
 import matplotlib.pyplot as plt
 from utils import read_raw_image, write_raw_image, get_height_width , path_raw_to_jpg, mult_channels
 
-data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
+data_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data'))
 masking_dir = os.path.join(data_dir   , "masking")
 dataset_dir = os.path.join(data_dir   , "dataset/")
 pics_dir    = os.path.join(dataset_dir, "pics/")

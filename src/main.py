@@ -1,21 +1,16 @@
 import os
 from os.path import join as opj
 import sys
+import inspect
 import numpy as np
 import torch
 import json
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
-    'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/data_processing')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
-    'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/mmseg')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
-    'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/ai')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
-    'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/sky_detection')))
-from losses import construct_loss
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data_processing')))
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'mmsgt')))
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ai')))
 from utils import read_raw_image, write_raw_image, path_raw_to_jpg, get_model_path
 
-data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
+data_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data'))
 masking_dir   = os.path.join(data_dir     , "masking/")
 dataset_dir   = os.path.join(data_dir     , "dataset/")
 checks_dir    = os.path.join(data_dir     , "checks/")
@@ -100,6 +95,21 @@ for key in mask_dict.keys():
 #                       MMSEGMENTATION
 #=================================================================
 
+
+'''
+#VIS_VAL
+from vis import vis_val
+timestamp = "0702-1952"
+vis_val(timestamp)
+'''
+
+'''
+#VIS_TRAIN
+from vis import vis_train
+timestamp = "0610-1109"
+vis_train(timestamp)
+'''
+
 '''
 #GET_SCORE
 from inference import get_cm_arr
@@ -122,7 +132,7 @@ print(f'Total Global Accuracy: {global_accuracy:.4f}')
 
 '''
 #SEE_PREDS
-from inference import see_preds
+from mmsgt.inference import see_preds
 print("see_preds starts running")
 preds = see_preds()
 '''

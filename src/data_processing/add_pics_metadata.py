@@ -2,7 +2,7 @@ import os
 import sys
 import csv
 
-data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
+data_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data'))
 dataset_dir = os.path.join(data_dir, "dataset/")
 metadata_dir = os.path.join(dataset_dir, "metadata/")
 pics_dir = os.path.join(dataset_dir, "pics/")

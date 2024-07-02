@@ -4,15 +4,14 @@ import numpy as np
 import torch
 from skimage import io
 import pickle as pkl
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
-    'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/data_processing')))
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data_processing')))
 from crop_around_disk import crop_around_disk, get_disk_mask, get_disk_mask_list
 from downsize import quantile_extraction
 from load import draw_id_pprad_list
 from navig_dataset import get_id_pprad, get_id_endroit, get_id_mask
 from utils import read_raw_image, np_to_torch, write_raw_image, read_all_csv
 
-data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
+data_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 dataset_dir   = os.path.join(data_dir     , "dataset/")
 pics_dir      = os.path.join(dataset_dir  , "pics/")
 masks_dir     = os.path.join(dataset_dir  , "masks/")

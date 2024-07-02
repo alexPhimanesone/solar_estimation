@@ -1,8 +1,8 @@
 import sys
 import os
 from os.path import join as opj
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
-    'C:/Users/aphimaneso/Work/Projects/mmsegmentation/fisheye_to_equirectangular_v3')))
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                              '..', '..', 'fisheye_to_equirectangular_v3')))
 import numpy as np
 import cv2
 import yaml as yml
@@ -13,7 +13,7 @@ from calibrate_camera import calibrate_camera
 from camera_coords_to_image_intrinsic import camera_coords_to_image_intrinsic
 from navig_dataset import get_id_pprad, read_all_csv
 
-data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
+data_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data'))
 dataset_dir  = os.path.join(data_dir, "dataset/")
 pics_dir     = os.path.join(dataset_dir, "pics/")
 pprads_dir   = os.path.join(dataset_dir, "pprads/")

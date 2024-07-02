@@ -4,15 +4,13 @@ import sys
 import numpy as np
 from skimage import io
 import pickle as pkl
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
-    'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/data_processing')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
-    'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src')))
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')))
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data_processing')))
 from crop_around_disk import crop_around_disk, get_disk_mask, get_disk_mask_list
 from load import draw_id_pprad_list
 from navig_dataset import get_id_pprad, get_id_endroit, get_id_mask
 
-data_dir   = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
+data_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data'))
 data_z_dir = "Z:/Work/Projects/solar_estimation/data/"
 dataset_dir    = opj(data_dir      , "dataset/")
 pics_dir       = opj(dataset_dir   , "pics")

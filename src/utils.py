@@ -5,10 +5,9 @@ import numpy as np
 import torch
 import cv2
 import csv
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
-    'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/ai/')))
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ai')))
 
-data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
+data_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data'))
 dataset_dir   = os.path.join(data_dir   , "dataset/")
 pics_dir      = os.path.join(dataset_dir, "pics/")
 pprads_dir    = os.path.join(dataset_dir, "pprads/")
@@ -211,3 +210,14 @@ def squeeze_mask(mask_3d):
     mask_2d = mask_3d[:, :, 0]
     mask_2d = mask_2d // 255
     return mask_2d
+
+
+def get_vis_path(timestamp):
+    save_dir = opj(training_dir, timestamp)
+    print(save_dir)
+    for root, _, files in os.walk(save_dir):
+        if root.endswith("vis_data"):
+            for file in files:
+                if timestamp[:4] in file and timestamp[-4:] in file and file.endswith('.json'):
+                    return os.path.join(root, file)
+    return None

@@ -4,17 +4,15 @@ import numpy as np
 import torch
 import json
 import matplotlib.pyplot as plt
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
-    'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
-    'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/ai/')))
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')))
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'ai')))
 from light_model import LightModel
 from load import get_dataloader, get_items_cat
 from losses import construct_loss
 from metrics import confusion_mat_rates, acc, precision, recall, F1_score
 from utils import get_str_date_time, get_model_path, torch_to_np
 
-data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
+data_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data'))
 dataset_dir   = os.path.join(data_dir    , "dataset/")
 pics_dir      = os.path.join(dataset_dir , "pics/")
 masks_dir     = os.path.join(dataset_dir , "masks/")

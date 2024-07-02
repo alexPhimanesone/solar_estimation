@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 from utils import read_raw_image, get_height_width
 
-data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
+data_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data'))
 masking_dir = os.path.join(data_dir   , "masking")
 dataset_dir = os.path.join(data_dir   , "dataset/")
 pics_dir    = os.path.join(dataset_dir, "pics/")

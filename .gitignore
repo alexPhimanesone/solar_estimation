@@ -7,6 +7,7 @@ __pycache__
 
 # Virtual environments
 venv/
+solar_estimation_env/
 
 # Images
 *.jpg

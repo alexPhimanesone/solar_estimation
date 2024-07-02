@@ -1,11 +1,10 @@
 import os
 import sys
 import numpy as np
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
-    'C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/')))
+sys.path.append(data_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')))
 from utils import read_raw_image, write_raw_image
 
-data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
+data_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data'))
 masking_dir   = os.path.join(data_dir     , "masking/")
 dataset_dir   = os.path.join(data_dir     , "dataset/")
 checks_dir    = os.path.join(data_dir     , "checks/")

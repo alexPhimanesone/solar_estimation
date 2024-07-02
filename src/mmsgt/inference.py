@@ -6,19 +6,18 @@ import cv2
 import mmcv
 from mmengine import Config
 from mmseg.apis import MMSegInferencer, init_model, inference_model, show_result_pyplot
-sys.path.append("C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/data_processing")
-sys.path.append("C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/mmseg/configs")
-sys.path.append("C:/Users/aphimaneso/Work/Projects/mmsegmentation/src/ai")
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')))
+sys.path.append(os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'ai')))
 from metrics import confusion_mat
 from navig_dataset import get_id_endroit
 from utils import get_last_model_path, squeeze_mask
 
-data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"
+data_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data'))
 cropped_dir = opj(data_dir, "dataset", "mmseg_orga", "cropped")
 training_dir = opj(data_dir, "Training")
 
-train_timestamp = "0610-1109"
-iter = 200
+train_timestamp = "0702-1952"
+iter = 60
 config_fn = "unet-s5-d16_fcn_4xb4-160k_cityscapes-512x1024.py"
 set = "test"
 
@@ -73,7 +72,6 @@ def compute_metrics(cm_arr):
     f1_score = 2 * (precision * recall) / (precision + recall) if precision + recall != 0 else 0 #  F1 Score
     global_accuracy = (TP_total + TN_total) / (TP_total + TN_total + FP_total + FN_total) # Global Accuracy
     return precision, recall, f1_score, global_accuracy
-
 
 
 def see_preds():
