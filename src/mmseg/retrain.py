@@ -23,10 +23,11 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
 from utils import get_str_date_time
 
 data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data"
-dataset_dir = opj(data_dir, "dataset")
-training_dir = opj(data_dir, "Training/")
-save_dir = opj(training_dir, get_str_date_time())
-data_root = opj(dataset_dir, "mmseg_orga/", "cropped")
+dataset_dir  = opj(data_dir    , "dataset")
+training_dir = opj(data_dir    , "Training/")
+save_dir     = opj(training_dir, get_str_date_time())
+data_root    = opj(dataset_dir , "mmseg_orga/", "cropped")
+
 
 classes = ('sky', 'nonsky')
 palette = [[0, 0, 0], [255, 255, 255]]
@@ -44,7 +45,7 @@ def get_cfg():
     cfg = Config.fromfile('mmseg/configs/unet/unet-s5-d16_fcn_4xb4-160k_cityscapes-512x1024.py')
 
     cfg.norm_cfg = dict(requires_grad=True, type='BN') # Since we use only one GPU, BN is used instead of SyncBN
-    cfg.crop_size = (256, 256)
+    cfg.crop_size = (512, 512)
     cfg.model.data_preprocessor.size = cfg.crop_size
     cfg.model.backbone.norm_cfg = cfg.norm_cfg
     cfg.model.decode_head.norm_cfg = cfg.norm_cfg
@@ -66,11 +67,12 @@ def get_cfg():
     cfg.train_pipeline = [
         dict(type='LoadImageFromFile'),
         dict(type='LoadAnnotations'),
-        dict(type='RandomResize', scale=(512, 512), ratio_range=(0.5, 2.0), keep_ratio=True),
+        dict(type='Resize', scale=(512, 512), keep_ratio=True),
+        #dict(type='RandomResize', scale=(512, 512), ratio_range=(0.5, 2.0), keep_ratio=True),
         dict(type='RandomRotate', prob=1, degree=180, pad_val=0, seg_pad_val=0),
         dict(type='RandomFlip', prob=0.5),
-        #dict(type='PhotoMetricDistortion'),
-        dict(type='RandomCrop', crop_size=cfg.crop_size, cat_max_ratio=1.0), # default cat_max_ratio is 0.75
+        dict(type='PhotoMetricDistortion'),
+        #dict(type='RandomCrop', crop_size=cfg.crop_size, cat_max_ratio=1.0), # default cat_max_ratio is 0.75
         dict(type='PackSegInputs')
     ]
 
@@ -83,7 +85,7 @@ def get_cfg():
         dict(type='PackSegInputs')
     ]
 
-    cfg.model.test_cfg = dict(crop_size=(256, 256), mode='slide', stride=(170, 170))
+    cfg.model.test_cfg = dict(crop_size=(512, 512), mode='slide', stride=(170, 170))
 
     cfg.train_dataloader.dataset.type = cfg.dataset_type
     cfg.train_dataloader.dataset.data_root = cfg.data_root
@@ -105,10 +107,10 @@ def get_cfg():
     # Set up working dir to save files and logs.
     cfg.work_dir = save_dir
 
-    cfg.train_cfg.max_iters = 250
-    cfg.train_cfg.val_interval = 250
-    cfg.default_hooks.logger.interval = 25
-    cfg.default_hooks.checkpoint.interval = 50
+    cfg.train_cfg.max_iters = 16 #250, beaucoup plus
+    cfg.train_cfg.val_interval = 1 #250
+    cfg.default_hooks.logger.interval = 1 #25
+    cfg.default_hooks.checkpoint.interval = 1 #50
 
     # Set seed to facilitate reproducing the result
     cfg['randomness'] = dict(seed=0)
