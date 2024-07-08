@@ -1,0 +1,1532 @@
+2024/07/04 19:37:55 - mmengine - INFO - 
+------------------------------------------------------------
+System environment:
+    sys.platform: linux
+    Python: 3.9.0 (default, Dec 15 2023, 12:09:23) [GCC 12.3.0]
+    CUDA available: False
+    MUSA available: False
+    numpy_random_seed: 0
+    GCC: gcc (Ubuntu 12.3.0-1ubuntu1~23.04) 12.3.0
+    PyTorch: 2.3.1+cu118
+    PyTorch compiling details: PyTorch built with:
+  - GCC 9.3
+  - C++ Version: 201703
+  - Intel(R) oneAPI Math Kernel Library Version 2022.2-Product Build 20220804 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v3.3.6 (Git Hash 86e6af5974177e513fd3fee58425e1063e7f1361)
+  - OpenMP 201511 (a.k.a. OpenMP 4.5)
+  - LAPACK is enabled (usually provided by MKL)
+  - NNPACK is enabled
+  - CPU capability usage: AVX512
+  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, CUDA_VERSION=11.8, CUDNN_VERSION=8.7.0, CXX_COMPILER=/opt/rh/devtoolset-9/root/usr/bin/c++, CXX_FLAGS= -D_GLIBCXX_USE_CXX11_ABI=0 -fabi-version=11 -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -DNDEBUG -DUSE_KINETO -DLIBKINETO_NOROCTRACER -DUSE_FBGEMM -DUSE_QNNPACK -DUSE_PYTORCH_QNNPACK -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -O2 -fPIC -Wall -Wextra -Werror=return-type -Werror=non-virtual-dtor -Werror=bool-operation -Wnarrowing -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wno-unused-parameter -Wno-unused-function -Wno-unused-result -Wno-strict-overflow -Wno-strict-aliasing -Wno-stringop-overflow -Wsuggest-override -Wno-psabi -Wno-error=pedantic -Wno-error=old-style-cast -Wno-missing-braces -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Werror=format -Wno-stringop-overflow, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, TORCH_VERSION=2.3.1, USE_CUDA=ON, USE_CUDNN=ON, USE_CUSPARSELT=1, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_GLOO=ON, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=1, USE_NNPACK=ON, USE_OPENMP=ON, USE_ROCM=OFF, USE_ROCM_KERNEL_ASSERT=OFF, 
+
+    OpenCV: 4.10.0
+    MMEngine: 0.10.3
+
+Runtime environment:
+    cudnn_benchmark: True
+    dist_cfg: {'backend': 'nccl'}
+    mp_cfg: {'mp_start_method': 'fork', 'opencv_num_threads': 0}
+    seed: 0
+    Distributed launcher: none
+    Distributed training: False
+    GPU number: 1
+------------------------------------------------------------
+
+2024/07/04 19:37:56 - mmengine - INFO - Config:
+crop_size = (
+    512,
+    512,
+)
+data_preprocessor = dict(
+    bgr_to_rgb=True,
+    mean=[
+        123.675,
+        116.28,
+        103.53,
+    ],
+    pad_val=0,
+    seg_pad_val=255,
+    size=(
+        512,
+        1024,
+    ),
+    std=[
+        58.395,
+        57.12,
+        57.375,
+    ],
+    type='SegDataPreProcessor')
+data_root = '/home/max/APH/solar_estimation/mmsegmentation/solar_estimation/data/dataset/mmseg_orga/cropped'
+dataset_type = 'SkyDetectionDataset'
+default_hooks = dict(
+    checkpoint=dict(by_epoch=False, interval=20, type='CheckpointHook'),
+    logger=dict(interval=20, log_metric_by_epoch=False, type='LoggerHook'),
+    param_scheduler=dict(type='ParamSchedulerHook'),
+    sampler_seed=dict(type='DistSamplerSeedHook'),
+    timer=dict(type='IterTimerHook'),
+    visualization=dict(type='SegVisualizationHook'))
+default_scope = 'mmseg'
+env_cfg = dict(
+    cudnn_benchmark=True,
+    dist_cfg=dict(backend='nccl'),
+    mp_cfg=dict(mp_start_method='fork', opencv_num_threads=0))
+img_ratios = [
+    0.5,
+    0.75,
+    1.0,
+    1.25,
+    1.5,
+    1.75,
+]
+load_from = '/home/max/APH/solar_estimation/mmsegmentation/solar_estimation/data/pretrained_models/fcn_unet_s5-d16_4x4_512x1024_160k_cityscapes_20211210_145204-6860854e.pth'
+log_level = 'INFO'
+log_processor = dict(by_epoch=False)
+model = dict(
+    auxiliary_head=dict(
+        align_corners=False,
+        channels=64,
+        concat_input=False,
+        dropout_ratio=0.1,
+        in_channels=128,
+        in_index=3,
+        loss_decode=dict(
+            loss_weight=0.4, type='CrossEntropyLoss', use_sigmoid=False),
+        norm_cfg=dict(requires_grad=True, type='BN'),
+        num_classes=2,
+        num_convs=1,
+        out_channels=2,
+        type='FCNHead'),
+    backbone=dict(
+        act_cfg=dict(type='ReLU'),
+        base_channels=64,
+        conv_cfg=None,
+        dec_dilations=(
+            1,
+            1,
+            1,
+            1,
+        ),
+        dec_num_convs=(
+            2,
+            2,
+            2,
+            2,
+        ),
+        downsamples=(
+            True,
+            True,
+            True,
+            True,
+        ),
+        enc_dilations=(
+            1,
+            1,
+            1,
+            1,
+            1,
+        ),
+        enc_num_convs=(
+            2,
+            2,
+            2,
+            2,
+            2,
+        ),
+        in_channels=3,
+        norm_cfg=dict(requires_grad=True, type='BN'),
+        norm_eval=False,
+        num_stages=5,
+        strides=(
+            1,
+            1,
+            1,
+            1,
+            1,
+        ),
+        type='UNet',
+        upsample_cfg=dict(type='InterpConv'),
+        with_cp=False),
+    data_preprocessor=dict(
+        bgr_to_rgb=True,
+        mean=[
+            123.675,
+            116.28,
+            103.53,
+        ],
+        pad_val=0,
+        seg_pad_val=255,
+        size=(
+            512,
+            512,
+        ),
+        std=[
+            58.395,
+            57.12,
+            57.375,
+        ],
+        type='SegDataPreProcessor'),
+    decode_head=dict(
+        align_corners=False,
+        channels=64,
+        concat_input=False,
+        dropout_ratio=0.1,
+        in_channels=64,
+        in_index=4,
+        loss_decode=dict(
+            loss_weight=1.0, type='CrossEntropyLoss', use_sigmoid=False),
+        norm_cfg=dict(requires_grad=True, type='BN'),
+        num_classes=2,
+        num_convs=1,
+        out_channels=2,
+        type='FCNHead'),
+    pretrained=None,
+    test_cfg=dict(crop_size=(
+        512,
+        512,
+    ), mode='slide', stride=(
+        170,
+        170,
+    )),
+    train_cfg=dict(),
+    type='EncoderDecoder')
+norm_cfg = dict(requires_grad=True, type='BN')
+optim_wrapper = dict(
+    clip_grad=None,
+    optimizer=dict(lr=0.001, momentum=0.9, type='SGD', weight_decay=0.0005),
+    type='OptimWrapper')
+optimizer = dict(lr=0.001, momentum=0.9, type='SGD', weight_decay=0.0005)
+param_scheduler = [
+    dict(
+        begin=0,
+        by_epoch=False,
+        end=160000,
+        eta_min=0.0001,
+        power=0.9,
+        type='PolyLR'),
+]
+randomness = dict(seed=0)
+resume = False
+test_cfg = dict(type='TestLoop')
+test_dataloader = dict(
+    batch_size=1,
+    dataset=dict(
+        data_prefix=dict(img_path='img_dir/test', seg_map_path='ann_dir/test'),
+        data_root=
+        '/home/max/APH/solar_estimation/mmsegmentation/solar_estimation/data/dataset/mmseg_orga/cropped',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(keep_ratio=True, scale=(
+                512,
+                512,
+            ), type='Resize'),
+            dict(type='LoadAnnotations'),
+            dict(type='PackSegInputs'),
+        ],
+        type='SkyDetectionDataset'),
+    num_workers=4,
+    persistent_workers=True,
+    sampler=dict(shuffle=False, type='DefaultSampler'))
+test_evaluator = dict(
+    iou_metrics=[
+        'mIoU',
+    ], type='IoUMetric')
+test_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(keep_ratio=True, scale=(
+        512,
+        512,
+    ), type='Resize'),
+    dict(type='LoadAnnotations'),
+    dict(type='PackSegInputs'),
+]
+train_cfg = dict(max_iters=4000, type='IterBasedTrainLoop', val_interval=20)
+train_dataloader = dict(
+    batch_size=16,
+    dataset=dict(
+        data_prefix=dict(
+            img_path='img_dir/train', seg_map_path='ann_dir/train'),
+        data_root=
+        '/home/max/APH/solar_estimation/mmsegmentation/solar_estimation/data/dataset/mmseg_orga/cropped',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(type='LoadAnnotations'),
+            dict(keep_ratio=True, scale=(
+                512,
+                512,
+            ), type='Resize'),
+            dict(
+                degree=180,
+                pad_val=0,
+                prob=1,
+                seg_pad_val=0,
+                type='RandomRotate'),
+            dict(prob=0.5, type='RandomFlip'),
+            dict(
+                hue_delta=1,
+                saturation_range=(
+                    1.0,
+                    1.0,
+                ),
+                type='PhotoMetricDistortion'),
+            dict(type='PackSegInputs'),
+        ],
+        type='SkyDetectionDataset'),
+    num_workers=4,
+    persistent_workers=True,
+    sampler=dict(shuffle=True, type='InfiniteSampler'))
+train_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(type='LoadAnnotations'),
+    dict(keep_ratio=True, scale=(
+        512,
+        512,
+    ), type='Resize'),
+    dict(degree=180, pad_val=0, prob=1, seg_pad_val=0, type='RandomRotate'),
+    dict(prob=0.5, type='RandomFlip'),
+    dict(
+        hue_delta=1,
+        saturation_range=(
+            1.0,
+            1.0,
+        ),
+        type='PhotoMetricDistortion'),
+    dict(type='PackSegInputs'),
+]
+tta_model = dict(type='SegTTAModel')
+tta_pipeline = [
+    dict(backend_args=None, type='LoadImageFromFile'),
+    dict(
+        transforms=[
+            [
+                dict(keep_ratio=True, scale_factor=0.5, type='Resize'),
+                dict(keep_ratio=True, scale_factor=0.75, type='Resize'),
+                dict(keep_ratio=True, scale_factor=1.0, type='Resize'),
+                dict(keep_ratio=True, scale_factor=1.25, type='Resize'),
+                dict(keep_ratio=True, scale_factor=1.5, type='Resize'),
+                dict(keep_ratio=True, scale_factor=1.75, type='Resize'),
+            ],
+            [
+                dict(direction='horizontal', prob=0.0, type='RandomFlip'),
+                dict(direction='horizontal', prob=1.0, type='RandomFlip'),
+            ],
+            [
+                dict(type='LoadAnnotations'),
+            ],
+            [
+                dict(type='PackSegInputs'),
+            ],
+        ],
+        type='TestTimeAug'),
+]
+val_cfg = dict(type='ValLoop')
+val_dataloader = dict(
+    batch_size=1,
+    dataset=dict(
+        data_prefix=dict(img_path='img_dir/test', seg_map_path='ann_dir/test'),
+        data_root=
+        '/home/max/APH/solar_estimation/mmsegmentation/solar_estimation/data/dataset/mmseg_orga/cropped',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(keep_ratio=True, scale=(
+                512,
+                512,
+            ), type='Resize'),
+            dict(type='LoadAnnotations'),
+            dict(type='PackSegInputs'),
+        ],
+        type='SkyDetectionDataset'),
+    num_workers=4,
+    persistent_workers=True,
+    sampler=dict(shuffle=False, type='DefaultSampler'))
+val_evaluator = dict(
+    iou_metrics=[
+        'mIoU',
+    ], type='IoUMetric')
+vis_backends = [
+    dict(type='LocalVisBackend'),
+]
+visualizer = dict(
+    name='visualizer',
+    type='SegLocalVisualizer',
+    vis_backends=[
+        dict(type='LocalVisBackend'),
+    ])
+work_dir = '/home/max/APH/solar_estimation/mmsegmentation/solar_estimation/data/Training/0704-1937'
+
+2024/07/04 19:37:57 - mmengine - INFO - Distributed training is not used, all SyncBatchNorm (SyncBN) layers in the model will be automatically reverted to BatchNormXd layers if they are used.
+2024/07/04 19:37:57 - mmengine - INFO - Hooks will be executed in the following order:
+before_run:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+before_train:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_train_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) DistSamplerSeedHook                
+ -------------------- 
+before_train_iter:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_train_iter:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) SegVisualizationHook               
+(BELOW_NORMAL) LoggerHook                         
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+after_train_epoch:
+(NORMAL      ) IterTimerHook                      
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_val:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+before_val_epoch:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+before_val_iter:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_val_iter:
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) SegVisualizationHook               
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_val_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+after_val:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+after_train:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_test:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+before_test_epoch:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+before_test_iter:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_test_iter:
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) SegVisualizationHook               
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_test_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_test:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+after_run:
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+2024/07/04 19:37:58 - mmengine - WARNING - The prefix is not set in metric class IoUMetric.
+Name of parameter - Initialization information
+
+backbone.encoder.0.0.convs.0.conv.weight - torch.Size([64, 3, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.encoder.0.0.convs.0.bn.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.encoder.0.0.convs.0.bn.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.encoder.0.0.convs.1.conv.weight - torch.Size([64, 64, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.encoder.0.0.convs.1.bn.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.encoder.0.0.convs.1.bn.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.encoder.1.1.convs.0.conv.weight - torch.Size([128, 64, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.encoder.1.1.convs.0.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.encoder.1.1.convs.0.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.encoder.1.1.convs.1.conv.weight - torch.Size([128, 128, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.encoder.1.1.convs.1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.encoder.1.1.convs.1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.encoder.2.1.convs.0.conv.weight - torch.Size([256, 128, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.encoder.2.1.convs.0.bn.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.encoder.2.1.convs.0.bn.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.encoder.2.1.convs.1.conv.weight - torch.Size([256, 256, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.encoder.2.1.convs.1.bn.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.encoder.2.1.convs.1.bn.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.encoder.3.1.convs.0.conv.weight - torch.Size([512, 256, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.encoder.3.1.convs.0.bn.weight - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.encoder.3.1.convs.0.bn.bias - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.encoder.3.1.convs.1.conv.weight - torch.Size([512, 512, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.encoder.3.1.convs.1.bn.weight - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.encoder.3.1.convs.1.bn.bias - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.encoder.4.1.convs.0.conv.weight - torch.Size([1024, 512, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.encoder.4.1.convs.0.bn.weight - torch.Size([1024]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.encoder.4.1.convs.0.bn.bias - torch.Size([1024]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.encoder.4.1.convs.1.conv.weight - torch.Size([1024, 1024, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.encoder.4.1.convs.1.bn.weight - torch.Size([1024]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.encoder.4.1.convs.1.bn.bias - torch.Size([1024]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.0.conv_block.convs.0.conv.weight - torch.Size([64, 128, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.decoder.0.conv_block.convs.0.bn.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.0.conv_block.convs.0.bn.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.0.conv_block.convs.1.conv.weight - torch.Size([64, 64, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.decoder.0.conv_block.convs.1.bn.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.0.conv_block.convs.1.bn.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.0.upsample.interp_upsample.1.conv.weight - torch.Size([64, 128, 1, 1]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.decoder.0.upsample.interp_upsample.1.bn.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.0.upsample.interp_upsample.1.bn.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.1.conv_block.convs.0.conv.weight - torch.Size([128, 256, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.decoder.1.conv_block.convs.0.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.1.conv_block.convs.0.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.1.conv_block.convs.1.conv.weight - torch.Size([128, 128, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.decoder.1.conv_block.convs.1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.1.conv_block.convs.1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.1.upsample.interp_upsample.1.conv.weight - torch.Size([128, 256, 1, 1]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.decoder.1.upsample.interp_upsample.1.bn.weight - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.1.upsample.interp_upsample.1.bn.bias - torch.Size([128]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.2.conv_block.convs.0.conv.weight - torch.Size([256, 512, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.decoder.2.conv_block.convs.0.bn.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.2.conv_block.convs.0.bn.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.2.conv_block.convs.1.conv.weight - torch.Size([256, 256, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.decoder.2.conv_block.convs.1.bn.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.2.conv_block.convs.1.bn.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.2.upsample.interp_upsample.1.conv.weight - torch.Size([256, 512, 1, 1]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.decoder.2.upsample.interp_upsample.1.bn.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.2.upsample.interp_upsample.1.bn.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.3.conv_block.convs.0.conv.weight - torch.Size([512, 1024, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.decoder.3.conv_block.convs.0.bn.weight - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.3.conv_block.convs.0.bn.bias - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.3.conv_block.convs.1.conv.weight - torch.Size([512, 512, 3, 3]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.decoder.3.conv_block.convs.1.bn.weight - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.3.conv_block.convs.1.bn.bias - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.3.upsample.interp_upsample.1.conv.weight - torch.Size([512, 1024, 1, 1]): 
+KaimingInit: a=0, mode=fan_out, nonlinearity=relu, distribution =normal, bias=0 
+
+backbone.decoder.3.upsample.interp_upsample.1.bn.weight - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+backbone.decoder.3.upsample.interp_upsample.1.bn.bias - torch.Size([512]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+decode_head.conv_seg.weight - torch.Size([2, 64, 1, 1]): 
+NormalInit: mean=0, std=0.01, bias=0 
+
+decode_head.conv_seg.bias - torch.Size([2]): 
+NormalInit: mean=0, std=0.01, bias=0 
+
+decode_head.convs.0.conv.weight - torch.Size([64, 64, 3, 3]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+decode_head.convs.0.bn.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+decode_head.convs.0.bn.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+auxiliary_head.conv_seg.weight - torch.Size([2, 64, 1, 1]): 
+NormalInit: mean=0, std=0.01, bias=0 
+
+auxiliary_head.conv_seg.bias - torch.Size([2]): 
+NormalInit: mean=0, std=0.01, bias=0 
+
+auxiliary_head.convs.0.conv.weight - torch.Size([64, 128, 3, 3]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+auxiliary_head.convs.0.bn.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+
+auxiliary_head.convs.0.bn.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of EncoderDecoder  
+2024/07/04 19:37:59 - mmengine - INFO - Load checkpoint from /home/max/APH/solar_estimation/mmsegmentation/solar_estimation/data/pretrained_models/fcn_unet_s5-d16_4x4_512x1024_160k_cityscapes_20211210_145204-6860854e.pth
+2024/07/04 19:37:59 - mmengine - WARNING - "FileClient" will be deprecated in future. Please use io functions in https://mmengine.readthedocs.io/en/latest/api/fileio.html#file-io
+2024/07/04 19:37:59 - mmengine - WARNING - "HardDiskBackend" is the alias of "LocalBackend" and the former will be deprecated in future.
+2024/07/04 19:37:59 - mmengine - INFO - Checkpoints will be saved to /home/max/APH/solar_estimation/mmsegmentation/solar_estimation/data/Training/0704-1937.
+2024/07/04 19:52:35 - mmengine - INFO - Iter(train) [  20/4000]  lr: 9.9990e-04  eta: 2 days, 0:23:14  time: 43.6886  data_time: 0.0111  loss: 0.8684  decode.loss_ce: 0.6074  decode.acc_seg: 73.3990  aux.loss_ce: 0.2610  aux.acc_seg: 73.3990
+2024/07/04 19:52:35 - mmengine - INFO - Saving checkpoint at 20 iterations
+2024/07/04 19:53:05 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:34  time: 1.4595  data_time: 0.0127  
+2024/07/04 19:53:35 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:05  time: 1.4664  data_time: 0.0127  
+2024/07/04 19:54:04 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4765  data_time: 0.0135  
+2024/07/04 19:54:33 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3458  data_time: 0.0100  
+2024/07/04 19:54:37 - mmengine - INFO - per class results:
+2024/07/04 19:54:37 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 66.78 | 100.0 |
+| nonsky |  0.0  |  0.0  |
++--------+-------+-------+
+2024/07/04 19:54:37 - mmengine - INFO - Iter(val) [84/84]    aAcc: 66.7800  mIoU: 33.3900  mAcc: 50.0000  data_time: 0.0142  time: 1.4461
+2024/07/04 19:56:05 - mmengine - INFO - Exp name: unet-s5-d16_fcn_4xb4-160k_cityscapes-512x1024_20240704_193755
+2024/07/04 20:09:11 - mmengine - INFO - Iter(train) [  40/4000]  lr: 9.9980e-04  eta: 2 days, 0:06:31  time: 43.6329  data_time: 0.0113  loss: 0.6497  decode.loss_ce: 0.4257  decode.acc_seg: 88.7970  aux.loss_ce: 0.2239  aux.acc_seg: 68.6354
+2024/07/04 20:09:11 - mmengine - INFO - Saving checkpoint at 40 iterations
+2024/07/04 20:09:42 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:34  time: 1.4807  data_time: 0.0119  
+2024/07/04 20:10:11 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:05  time: 1.4921  data_time: 0.0115  
+2024/07/04 20:10:41 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4826  data_time: 0.0122  
+2024/07/04 20:11:09 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3478  data_time: 0.0095  
+2024/07/04 20:11:14 - mmengine - INFO - per class results:
+2024/07/04 20:11:14 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 93.78 | 97.19 |
+| nonsky | 87.73 | 92.69 |
++--------+-------+-------+
+2024/07/04 20:11:14 - mmengine - INFO - Iter(val) [84/84]    aAcc: 95.6900  mIoU: 90.7600  mAcc: 94.9400  data_time: 0.0118  time: 1.4450
+2024/07/04 20:25:46 - mmengine - INFO - Iter(train) [  60/4000]  lr: 9.9970e-04  eta: 1 day, 23:48:39  time: 43.4636  data_time: 0.0123  loss: 0.4282  decode.loss_ce: 0.2574  decode.acc_seg: 94.7515  aux.loss_ce: 0.1708  aux.acc_seg: 90.2818
+2024/07/04 20:25:46 - mmengine - INFO - Saving checkpoint at 60 iterations
+2024/07/04 20:26:16 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:35  time: 1.4705  data_time: 0.0112  
+2024/07/04 20:26:46 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:05  time: 1.4805  data_time: 0.0122  
+2024/07/04 20:27:16 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.5051  data_time: 0.0116  
+2024/07/04 20:27:44 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3548  data_time: 0.0095  
+2024/07/04 20:27:49 - mmengine - INFO - per class results:
+2024/07/04 20:27:49 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 93.11 | 93.52 |
+| nonsky |  87.7 | 99.12 |
++--------+-------+-------+
+2024/07/04 20:27:49 - mmengine - INFO - Iter(val) [84/84]    aAcc: 95.3800  mIoU: 90.4000  mAcc: 96.3200  data_time: 0.0118  time: 1.4531
+2024/07/04 20:42:22 - mmengine - INFO - Iter(train) [  80/4000]  lr: 9.9960e-04  eta: 1 day, 23:33:28  time: 43.6567  data_time: 0.0111  loss: 0.3133  decode.loss_ce: 0.1818  decode.acc_seg: 95.2052  aux.loss_ce: 0.1315  aux.acc_seg: 95.4032
+2024/07/04 20:42:22 - mmengine - INFO - Saving checkpoint at 80 iterations
+2024/07/04 20:42:52 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:33  time: 1.4568  data_time: 0.0113  
+2024/07/04 20:43:21 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4403  data_time: 0.0098  
+2024/07/04 20:43:50 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:34  time: 1.4354  data_time: 0.0106  
+2024/07/04 20:44:18 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3405  data_time: 0.0102  
+2024/07/04 20:44:23 - mmengine - INFO - per class results:
+2024/07/04 20:44:23 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 94.59 | 95.13 |
+| nonsky | 90.04 | 98.85 |
++--------+-------+-------+
+2024/07/04 20:44:23 - mmengine - INFO - Iter(val) [84/84]    aAcc: 96.3700  mIoU: 92.3200  mAcc: 96.9900  data_time: 0.0110  time: 1.4226
+2024/07/04 20:58:53 - mmengine - INFO - Iter(train) [ 100/4000]  lr: 9.9950e-04  eta: 1 day, 23:16:57  time: 43.4605  data_time: 0.0114  loss: 0.2624  decode.loss_ce: 0.1555  decode.acc_seg: 95.5303  aux.loss_ce: 0.1069  aux.acc_seg: 94.4636
+2024/07/04 20:58:53 - mmengine - INFO - Saving checkpoint at 100 iterations
+2024/07/04 20:59:23 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:33  time: 1.4602  data_time: 0.0113  
+2024/07/04 20:59:53 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4541  data_time: 0.0113  
+2024/07/04 21:00:22 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4633  data_time: 0.0113  
+2024/07/04 21:00:50 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3388  data_time: 0.0097  
+2024/07/04 21:00:54 - mmengine - INFO - per class results:
+2024/07/04 21:00:54 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 95.83 | 96.59 |
+| nonsky | 92.09 | 98.39 |
++--------+-------+-------+
+2024/07/04 21:00:54 - mmengine - INFO - Iter(val) [84/84]    aAcc: 97.1900  mIoU: 93.9600  mAcc: 97.4900  data_time: 0.0112  time: 1.4290
+2024/07/04 21:15:26 - mmengine - INFO - Iter(train) [ 120/4000]  lr: 9.9940e-04  eta: 1 day, 23:01:44  time: 43.5777  data_time: 0.0110  loss: 0.2292  decode.loss_ce: 0.1399  decode.acc_seg: 95.1861  aux.loss_ce: 0.0893  aux.acc_seg: 94.6442
+2024/07/04 21:15:26 - mmengine - INFO - Saving checkpoint at 120 iterations
+2024/07/04 21:15:56 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:33  time: 1.4613  data_time: 0.0096  
+2024/07/04 21:16:26 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4505  data_time: 0.0095  
+2024/07/04 21:16:55 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4533  data_time: 0.0095  
+2024/07/04 21:17:23 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3355  data_time: 0.0079  
+2024/07/04 21:17:28 - mmengine - INFO - per class results:
+2024/07/04 21:17:28 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 96.17 | 97.09 |
+| nonsky | 92.65 | 98.07 |
++--------+-------+-------+
+2024/07/04 21:17:28 - mmengine - INFO - Iter(val) [84/84]    aAcc: 97.4100  mIoU: 94.4100  mAcc: 97.5800  data_time: 0.0099  time: 1.4309
+2024/07/04 21:31:55 - mmengine - INFO - Iter(train) [ 140/4000]  lr: 9.9930e-04  eta: 1 day, 22:44:51  time: 43.3235  data_time: 0.0110  loss: 0.2130  decode.loss_ce: 0.1334  decode.acc_seg: 96.0990  aux.loss_ce: 0.0796  aux.acc_seg: 95.7060
+2024/07/04 21:31:55 - mmengine - INFO - Saving checkpoint at 140 iterations
+2024/07/04 21:32:25 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:33  time: 1.4542  data_time: 0.0117  
+2024/07/04 21:32:55 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4562  data_time: 0.0117  
+2024/07/04 21:33:24 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4666  data_time: 0.0099  
+2024/07/04 21:33:52 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3366  data_time: 0.0082  
+2024/07/04 21:33:57 - mmengine - INFO - per class results:
+2024/07/04 21:33:57 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 96.56 | 97.47 |
+| nonsky | 93.35 | 98.11 |
++--------+-------+-------+
+2024/07/04 21:33:57 - mmengine - INFO - Iter(val) [84/84]    aAcc: 97.6800  mIoU: 94.9600  mAcc: 97.7900  data_time: 0.0109  time: 1.4300
+2024/07/04 21:48:25 - mmengine - INFO - Iter(train) [ 160/4000]  lr: 9.9920e-04  eta: 1 day, 22:28:52  time: 43.3238  data_time: 0.0108  loss: 0.1899  decode.loss_ce: 0.1197  decode.acc_seg: 96.1647  aux.loss_ce: 0.0702  aux.acc_seg: 95.9291
+2024/07/04 21:48:25 - mmengine - INFO - Saving checkpoint at 160 iterations
+2024/07/04 21:48:55 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:33  time: 1.4554  data_time: 0.0096  
+2024/07/04 21:49:24 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4619  data_time: 0.0100  
+2024/07/04 21:49:53 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4623  data_time: 0.0095  
+2024/07/04 21:50:21 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3353  data_time: 0.0079  
+2024/07/04 21:50:26 - mmengine - INFO - per class results:
+2024/07/04 21:50:26 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 96.73 | 97.82 |
+| nonsky | 93.62 | 97.72 |
++--------+-------+-------+
+2024/07/04 21:50:26 - mmengine - INFO - Iter(val) [84/84]    aAcc: 97.7900  mIoU: 95.1700  mAcc: 97.7700  data_time: 0.0098  time: 1.4278
+2024/07/04 22:04:52 - mmengine - INFO - Iter(train) [ 180/4000]  lr: 9.9909e-04  eta: 1 day, 22:12:31  time: 43.3078  data_time: 0.0109  loss: 0.1893  decode.loss_ce: 0.1222  decode.acc_seg: 94.7530  aux.loss_ce: 0.0671  aux.acc_seg: 94.7014
+2024/07/04 22:04:52 - mmengine - INFO - Saving checkpoint at 180 iterations
+2024/07/04 22:05:22 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:33  time: 1.4505  data_time: 0.0103  
+2024/07/04 22:05:52 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4614  data_time: 0.0103  
+2024/07/04 22:06:21 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4652  data_time: 0.0103  
+2024/07/04 22:06:49 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3329  data_time: 0.0079  
+2024/07/04 22:06:54 - mmengine - INFO - per class results:
+2024/07/04 22:06:54 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 96.93 | 98.14 |
+| nonsky | 93.98 |  97.5 |
++--------+-------+-------+
+2024/07/04 22:06:54 - mmengine - INFO - Iter(val) [84/84]    aAcc: 97.9300  mIoU: 95.4600  mAcc: 97.8200  data_time: 0.0105  time: 1.4273
+2024/07/04 22:21:21 - mmengine - INFO - Iter(train) [ 200/4000]  lr: 9.9899e-04  eta: 1 day, 21:56:48  time: 43.3749  data_time: 0.0104  loss: 0.1713  decode.loss_ce: 0.1104  decode.acc_seg: 96.7061  aux.loss_ce: 0.0609  aux.acc_seg: 96.4876
+2024/07/04 22:21:21 - mmengine - INFO - Saving checkpoint at 200 iterations
+2024/07/04 22:21:51 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:33  time: 1.4459  data_time: 0.0095  
+2024/07/04 22:22:20 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:03  time: 1.4512  data_time: 0.0096  
+2024/07/04 22:22:49 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:34  time: 1.4607  data_time: 0.0096  
+2024/07/04 22:23:17 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3348  data_time: 0.0081  
+2024/07/04 22:23:22 - mmengine - INFO - per class results:
+2024/07/04 22:23:22 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 96.96 | 98.22 |
+| nonsky | 94.02 | 97.38 |
++--------+-------+-------+
+2024/07/04 22:23:22 - mmengine - INFO - Iter(val) [84/84]    aAcc: 97.9400  mIoU: 95.4900  mAcc: 97.8000  data_time: 0.0098  time: 1.4250
+2024/07/04 22:37:46 - mmengine - INFO - Iter(train) [ 220/4000]  lr: 9.9889e-04  eta: 1 day, 21:40:36  time: 43.1683  data_time: 0.0108  loss: 0.1728  decode.loss_ce: 0.1128  decode.acc_seg: 96.0840  aux.loss_ce: 0.0600  aux.acc_seg: 95.6428
+2024/07/04 22:37:46 - mmengine - INFO - Saving checkpoint at 220 iterations
+2024/07/04 22:38:16 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:33  time: 1.4539  data_time: 0.0095  
+2024/07/04 22:38:46 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4619  data_time: 0.0100  
+2024/07/04 22:39:15 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4505  data_time: 0.0094  
+2024/07/04 22:39:43 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3381  data_time: 0.0079  
+2024/07/04 22:39:48 - mmengine - INFO - per class results:
+2024/07/04 22:39:48 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 96.96 | 98.18 |
+| nonsky | 94.04 | 97.47 |
++--------+-------+-------+
+2024/07/04 22:39:48 - mmengine - INFO - Iter(val) [84/84]    aAcc: 97.9500  mIoU: 95.5000  mAcc: 97.8300  data_time: 0.0100  time: 1.4306
+2024/07/04 22:54:13 - mmengine - INFO - Iter(train) [ 240/4000]  lr: 9.9879e-04  eta: 1 day, 21:24:56  time: 43.2620  data_time: 0.0105  loss: 0.1598  decode.loss_ce: 0.1040  decode.acc_seg: 96.5594  aux.loss_ce: 0.0558  aux.acc_seg: 96.2735
+2024/07/04 22:54:13 - mmengine - INFO - Saving checkpoint at 240 iterations
+2024/07/04 22:54:44 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:34  time: 1.4724  data_time: 0.0097  
+2024/07/04 22:55:14 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:05  time: 1.4914  data_time: 0.0097  
+2024/07/04 22:55:43 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4918  data_time: 0.0097  
+2024/07/04 22:56:11 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3362  data_time: 0.0081  
+2024/07/04 22:56:16 - mmengine - INFO - per class results:
+2024/07/04 22:56:16 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 96.98 | 98.29 |
+| nonsky | 94.05 | 97.29 |
++--------+-------+-------+
+2024/07/04 22:56:16 - mmengine - INFO - Iter(val) [84/84]    aAcc: 97.9600  mIoU: 95.5200  mAcc: 97.7900  data_time: 0.0099  time: 1.4456
+2024/07/04 23:10:42 - mmengine - INFO - Iter(train) [ 260/4000]  lr: 9.9869e-04  eta: 1 day, 21:09:27  time: 43.1553  data_time: 0.0104  loss: 0.1536  decode.loss_ce: 0.1008  decode.acc_seg: 95.6344  aux.loss_ce: 0.0528  aux.acc_seg: 95.2917
+2024/07/04 23:10:42 - mmengine - INFO - Saving checkpoint at 260 iterations
+2024/07/04 23:11:12 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:34  time: 1.4709  data_time: 0.0098  
+2024/07/04 23:11:41 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4842  data_time: 0.0098  
+2024/07/04 23:12:11 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4782  data_time: 0.0097  
+2024/07/04 23:12:39 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3565  data_time: 0.0081  
+2024/07/04 23:12:44 - mmengine - INFO - per class results:
+2024/07/04 23:12:44 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 96.99 | 98.36 |
+| nonsky | 94.05 | 97.15 |
++--------+-------+-------+
+2024/07/04 23:12:44 - mmengine - INFO - Iter(val) [84/84]    aAcc: 97.9600  mIoU: 95.5200  mAcc: 97.7600  data_time: 0.0101  time: 1.4430
+2024/07/04 23:27:10 - mmengine - INFO - Iter(train) [ 280/4000]  lr: 9.9859e-04  eta: 1 day, 20:54:06  time: 43.2427  data_time: 0.0106  loss: 0.1504  decode.loss_ce: 0.0993  decode.acc_seg: 96.7129  aux.loss_ce: 0.0510  aux.acc_seg: 96.5843
+2024/07/04 23:27:10 - mmengine - INFO - Saving checkpoint at 280 iterations
+2024/07/04 23:27:40 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:34  time: 1.4704  data_time: 0.0110  
+2024/07/04 23:28:09 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4723  data_time: 0.0110  
+2024/07/04 23:28:39 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4896  data_time: 0.0108  
+2024/07/04 23:29:07 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3464  data_time: 0.0089  
+2024/07/04 23:29:12 - mmengine - INFO - per class results:
+2024/07/04 23:29:12 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 96.98 | 98.47 |
+| nonsky | 94.03 | 96.93 |
++--------+-------+-------+
+2024/07/04 23:29:12 - mmengine - INFO - Iter(val) [84/84]    aAcc: 97.9600  mIoU: 95.5100  mAcc: 97.7000  data_time: 0.0108  time: 1.4406
+2024/07/04 23:43:38 - mmengine - INFO - Iter(train) [ 300/4000]  lr: 9.9849e-04  eta: 1 day, 20:38:59  time: 43.2381  data_time: 0.0108  loss: 0.1440  decode.loss_ce: 0.0951  decode.acc_seg: 96.7823  aux.loss_ce: 0.0489  aux.acc_seg: 96.4744
+2024/07/04 23:43:38 - mmengine - INFO - Saving checkpoint at 300 iterations
+2024/07/04 23:44:08 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:34  time: 1.4669  data_time: 0.0114  
+2024/07/04 23:44:38 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4719  data_time: 0.0106  
+2024/07/04 23:45:07 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4756  data_time: 0.0106  
+2024/07/04 23:45:35 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3341  data_time: 0.0085  
+2024/07/04 23:45:40 - mmengine - INFO - per class results:
+2024/07/04 23:45:40 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.15 | 98.56 |
+| nonsky | 94.35 | 97.09 |
++--------+-------+-------+
+2024/07/04 23:45:40 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.0700  mIoU: 95.7500  mAcc: 97.8200  data_time: 0.0113  time: 1.4371
+2024/07/05 00:00:06 - mmengine - INFO - Iter(train) [ 320/4000]  lr: 9.9838e-04  eta: 1 day, 20:24:05  time: 43.3189  data_time: 0.0117  loss: 0.1418  decode.loss_ce: 0.0948  decode.acc_seg: 96.5477  aux.loss_ce: 0.0470  aux.acc_seg: 96.3732
+2024/07/05 00:00:06 - mmengine - INFO - Saving checkpoint at 320 iterations
+2024/07/05 00:00:37 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:35  time: 1.5137  data_time: 0.0096  
+2024/07/05 00:01:07 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:05  time: 1.4680  data_time: 0.0105  
+2024/07/05 00:01:36 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4818  data_time: 0.0098  
+2024/07/05 00:02:04 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3298  data_time: 0.0081  
+2024/07/05 00:02:09 - mmengine - INFO - per class results:
+2024/07/05 00:02:09 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.14 |  98.6 |
+| nonsky | 94.33 | 96.99 |
++--------+-------+-------+
+2024/07/05 00:02:09 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.0600  mIoU: 95.7400  mAcc: 97.7900  data_time: 0.0102  time: 1.4424
+2024/07/05 00:16:33 - mmengine - INFO - Iter(train) [ 340/4000]  lr: 9.9828e-04  eta: 1 day, 20:08:48  time: 43.1823  data_time: 0.0104  loss: 0.1440  decode.loss_ce: 0.0960  decode.acc_seg: 96.3872  aux.loss_ce: 0.0481  aux.acc_seg: 96.0693
+2024/07/05 00:16:33 - mmengine - INFO - Saving checkpoint at 340 iterations
+2024/07/05 00:17:04 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:35  time: 1.4886  data_time: 0.0099  
+2024/07/05 00:17:33 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:05  time: 1.4729  data_time: 0.0108  
+2024/07/05 00:18:03 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4876  data_time: 0.0108  
+2024/07/05 00:18:31 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3429  data_time: 0.0087  
+2024/07/05 00:18:36 - mmengine - INFO - per class results:
+2024/07/05 00:18:36 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.14 | 98.66 |
+| nonsky | 94.32 | 96.86 |
++--------+-------+-------+
+2024/07/05 00:18:36 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.0600  mIoU: 95.7300  mAcc: 97.7600  data_time: 0.0109  time: 1.4440
+2024/07/05 00:33:00 - mmengine - INFO - Iter(train) [ 360/4000]  lr: 9.9818e-04  eta: 1 day, 19:53:35  time: 43.1399  data_time: 0.0104  loss: 0.1375  decode.loss_ce: 0.0915  decode.acc_seg: 96.3969  aux.loss_ce: 0.0460  aux.acc_seg: 96.1677
+2024/07/05 00:33:00 - mmengine - INFO - Saving checkpoint at 360 iterations
+2024/07/05 00:33:30 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:34  time: 1.4632  data_time: 0.0098  
+2024/07/05 00:34:00 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4658  data_time: 0.0099  
+2024/07/05 00:34:29 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4730  data_time: 0.0098  
+2024/07/05 00:34:57 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3432  data_time: 0.0081  
+2024/07/05 00:35:02 - mmengine - INFO - per class results:
+2024/07/05 00:35:02 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.18 | 98.72 |
+| nonsky | 94.38 | 96.81 |
++--------+-------+-------+
+2024/07/05 00:35:02 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.0800  mIoU: 95.7800  mAcc: 97.7600  data_time: 0.0101  time: 1.4388
+2024/07/05 00:49:26 - mmengine - INFO - Iter(train) [ 380/4000]  lr: 9.9808e-04  eta: 1 day, 19:38:27  time: 43.1390  data_time: 0.0107  loss: 0.1325  decode.loss_ce: 0.0887  decode.acc_seg: 97.1015  aux.loss_ce: 0.0439  aux.acc_seg: 96.9671
+2024/07/05 00:49:26 - mmengine - INFO - Saving checkpoint at 380 iterations
+2024/07/05 00:49:56 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:35  time: 1.4633  data_time: 0.0100  
+2024/07/05 00:50:26 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:05  time: 1.4870  data_time: 0.0100  
+2024/07/05 00:50:55 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4782  data_time: 0.0100  
+2024/07/05 00:51:24 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3865  data_time: 0.0082  
+2024/07/05 00:51:29 - mmengine - INFO - per class results:
+2024/07/05 00:51:29 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.22 | 98.72 |
+| nonsky | 94.47 | 96.91 |
++--------+-------+-------+
+2024/07/05 00:51:29 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.1200  mIoU: 95.8500  mAcc: 97.8100  data_time: 0.0103  time: 1.4495
+2024/07/05 01:05:55 - mmengine - INFO - Iter(train) [ 400/4000]  lr: 9.9798e-04  eta: 1 day, 19:23:39  time: 43.2819  data_time: 0.0112  loss: 0.1367  decode.loss_ce: 0.0918  decode.acc_seg: 96.7026  aux.loss_ce: 0.0450  aux.acc_seg: 96.5000
+2024/07/05 01:05:55 - mmengine - INFO - Saving checkpoint at 400 iterations
+2024/07/05 01:06:25 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:34  time: 1.4671  data_time: 0.0102  
+2024/07/05 01:06:55 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:05  time: 1.4701  data_time: 0.0110  
+2024/07/05 01:07:25 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.5004  data_time: 0.0111  
+2024/07/05 01:07:53 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3406  data_time: 0.0088  
+2024/07/05 01:07:57 - mmengine - INFO - per class results:
+2024/07/05 01:07:57 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.15 | 98.67 |
+| nonsky | 94.34 | 96.87 |
++--------+-------+-------+
+2024/07/05 01:07:57 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.0700  mIoU: 95.7500  mAcc: 97.7700  data_time: 0.0110  time: 1.4468
+2024/07/05 01:22:22 - mmengine - INFO - Iter(train) [ 420/4000]  lr: 9.9788e-04  eta: 1 day, 19:08:40  time: 43.1228  data_time: 0.0111  loss: 0.1366  decode.loss_ce: 0.0922  decode.acc_seg: 96.8766  aux.loss_ce: 0.0444  aux.acc_seg: 96.6640
+2024/07/05 01:22:22 - mmengine - INFO - Saving checkpoint at 420 iterations
+2024/07/05 01:22:52 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:34  time: 1.4737  data_time: 0.0102  
+2024/07/05 01:23:22 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:05  time: 1.4986  data_time: 0.0106  
+2024/07/05 01:23:51 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4828  data_time: 0.0111  
+2024/07/05 01:24:20 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3383  data_time: 0.0092  
+2024/07/05 01:24:24 - mmengine - INFO - per class results:
+2024/07/05 01:24:24 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.16 | 98.67 |
+| nonsky | 94.35 | 96.88 |
++--------+-------+-------+
+2024/07/05 01:24:24 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.0700  mIoU: 95.7500  mAcc: 97.7700  data_time: 0.0109  time: 1.4445
+2024/07/05 01:38:48 - mmengine - INFO - Iter(train) [ 440/4000]  lr: 9.9778e-04  eta: 1 day, 18:53:42  time: 43.1091  data_time: 0.0113  loss: 0.1344  decode.loss_ce: 0.0901  decode.acc_seg: 96.4966  aux.loss_ce: 0.0443  aux.acc_seg: 96.3104
+2024/07/05 01:38:48 - mmengine - INFO - Saving checkpoint at 440 iterations
+2024/07/05 01:39:19 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:34  time: 1.4795  data_time: 0.0100  
+2024/07/05 01:39:48 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:05  time: 1.4963  data_time: 0.0100  
+2024/07/05 01:40:18 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4870  data_time: 0.0106  
+2024/07/05 01:40:47 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3536  data_time: 0.0083  
+2024/07/05 01:40:52 - mmengine - INFO - per class results:
+2024/07/05 01:40:52 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   |  97.3 | 98.82 |
+| nonsky | 94.62 | 96.86 |
++--------+-------+-------+
+2024/07/05 01:40:52 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.1700  mIoU: 95.9600  mAcc: 97.8400  data_time: 0.0106  time: 1.4550
+2024/07/05 01:55:15 - mmengine - INFO - Iter(train) [ 460/4000]  lr: 9.9768e-04  eta: 1 day, 18:38:43  time: 43.1137  data_time: 0.0105  loss: 0.1323  decode.loss_ce: 0.0898  decode.acc_seg: 96.3445  aux.loss_ce: 0.0425  aux.acc_seg: 96.1133
+2024/07/05 01:55:15 - mmengine - INFO - Saving checkpoint at 460 iterations
+2024/07/05 01:55:46 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:34  time: 1.4717  data_time: 0.0110  
+2024/07/05 01:56:15 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4761  data_time: 0.0111  
+2024/07/05 01:56:45 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4828  data_time: 0.0116  
+2024/07/05 01:57:13 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3461  data_time: 0.0082  
+2024/07/05 01:57:18 - mmengine - INFO - per class results:
+2024/07/05 01:57:18 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   |  97.3 | 98.87 |
+| nonsky | 94.61 | 96.77 |
++--------+-------+-------+
+2024/07/05 01:57:18 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.1700  mIoU: 95.9600  mAcc: 97.8200  data_time: 0.0116  time: 1.4421
+2024/07/05 02:11:40 - mmengine - INFO - Iter(train) [ 480/4000]  lr: 9.9757e-04  eta: 1 day, 18:23:37  time: 43.0831  data_time: 0.0103  loss: 0.1267  decode.loss_ce: 0.0856  decode.acc_seg: 97.1197  aux.loss_ce: 0.0411  aux.acc_seg: 96.9631
+2024/07/05 02:11:40 - mmengine - INFO - Saving checkpoint at 480 iterations
+2024/07/05 02:12:10 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:34  time: 1.4942  data_time: 0.0096  
+2024/07/05 02:12:40 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4688  data_time: 0.0116  
+2024/07/05 02:13:09 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4711  data_time: 0.0118  
+2024/07/05 02:13:38 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3896  data_time: 0.0094  
+2024/07/05 02:13:42 - mmengine - INFO - per class results:
+2024/07/05 02:13:42 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.23 | 98.85 |
+| nonsky | 94.47 | 96.67 |
++--------+-------+-------+
+2024/07/05 02:13:42 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.1200  mIoU: 95.8500  mAcc: 97.7600  data_time: 0.0111  time: 1.4457
+2024/07/05 02:28:05 - mmengine - INFO - Iter(train) [ 500/4000]  lr: 9.9747e-04  eta: 1 day, 18:08:40  time: 43.0938  data_time: 0.0112  loss: 0.1245  decode.loss_ce: 0.0845  decode.acc_seg: 96.9605  aux.loss_ce: 0.0400  aux.acc_seg: 96.8728
+2024/07/05 02:28:05 - mmengine - INFO - Saving checkpoint at 500 iterations
+2024/07/05 02:28:36 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:35  time: 1.5092  data_time: 0.0097  
+2024/07/05 02:29:06 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:05  time: 1.4799  data_time: 0.0110  
+2024/07/05 02:29:35 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4719  data_time: 0.0122  
+2024/07/05 02:30:03 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3491  data_time: 0.0092  
+2024/07/05 02:30:08 - mmengine - INFO - per class results:
+2024/07/05 02:30:08 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.19 | 98.72 |
+| nonsky | 94.41 | 96.84 |
++--------+-------+-------+
+2024/07/05 02:30:08 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.0900  mIoU: 95.8000  mAcc: 97.7800  data_time: 0.0108  time: 1.4466
+2024/07/05 02:44:28 - mmengine - INFO - Iter(train) [ 520/4000]  lr: 9.9737e-04  eta: 1 day, 17:53:26  time: 42.9760  data_time: 0.0109  loss: 0.1226  decode.loss_ce: 0.0829  decode.acc_seg: 95.6958  aux.loss_ce: 0.0396  aux.acc_seg: 95.3879
+2024/07/05 02:44:28 - mmengine - INFO - Saving checkpoint at 520 iterations
+2024/07/05 02:44:59 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:34  time: 1.4868  data_time: 0.0096  
+2024/07/05 02:45:28 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4821  data_time: 0.0096  
+2024/07/05 02:45:58 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4797  data_time: 0.0098  
+2024/07/05 02:46:26 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3333  data_time: 0.0081  
+2024/07/05 02:46:30 - mmengine - INFO - per class results:
+2024/07/05 02:46:30 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.25 | 99.01 |
+| nonsky | 94.49 | 96.37 |
++--------+-------+-------+
+2024/07/05 02:46:30 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.1300  mIoU: 95.8700  mAcc: 97.6900  data_time: 0.0100  time: 1.4383
+2024/07/05 03:00:51 - mmengine - INFO - Iter(train) [ 540/4000]  lr: 9.9727e-04  eta: 1 day, 17:38:21  time: 43.0256  data_time: 0.0104  loss: 0.1254  decode.loss_ce: 0.0853  decode.acc_seg: 96.4780  aux.loss_ce: 0.0401  aux.acc_seg: 96.2425
+2024/07/05 03:00:51 - mmengine - INFO - Saving checkpoint at 540 iterations
+2024/07/05 03:01:21 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:34  time: 1.4627  data_time: 0.0099  
+2024/07/05 03:01:51 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:05  time: 1.4633  data_time: 0.0099  
+2024/07/05 03:02:21 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.5142  data_time: 0.0102  
+2024/07/05 03:02:49 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3429  data_time: 0.0083  
+2024/07/05 03:02:54 - mmengine - INFO - per class results:
+2024/07/05 03:02:54 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.23 | 98.94 |
+| nonsky | 94.44 | 96.46 |
++--------+-------+-------+
+2024/07/05 03:02:54 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.1100  mIoU: 95.8300  mAcc: 97.7000  data_time: 0.0101  time: 1.4458
+2024/07/05 03:17:14 - mmengine - INFO - Iter(train) [ 560/4000]  lr: 9.9717e-04  eta: 1 day, 17:23:16  time: 42.9370  data_time: 0.0106  loss: 0.1243  decode.loss_ce: 0.0845  decode.acc_seg: 96.5630  aux.loss_ce: 0.0398  aux.acc_seg: 96.3189
+2024/07/05 03:17:14 - mmengine - INFO - Saving checkpoint at 560 iterations
+2024/07/05 03:17:44 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:33  time: 1.4593  data_time: 0.0098  
+2024/07/05 03:18:13 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4644  data_time: 0.0099  
+2024/07/05 03:18:43 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4686  data_time: 0.0100  
+2024/07/05 03:19:11 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3296  data_time: 0.0088  
+2024/07/05 03:19:16 - mmengine - INFO - per class results:
+2024/07/05 03:19:16 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.28 | 99.03 |
+| nonsky | 94.55 | 96.39 |
++--------+-------+-------+
+2024/07/05 03:19:16 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.1500  mIoU: 95.9200  mAcc: 97.7100  data_time: 0.0104  time: 1.4363
+2024/07/05 03:33:35 - mmengine - INFO - Iter(train) [ 580/4000]  lr: 9.9707e-04  eta: 1 day, 17:08:10  time: 42.9805  data_time: 0.0106  loss: 0.1255  decode.loss_ce: 0.0853  decode.acc_seg: 97.0162  aux.loss_ce: 0.0402  aux.acc_seg: 96.8795
+2024/07/05 03:33:35 - mmengine - INFO - Saving checkpoint at 580 iterations
+2024/07/05 03:34:06 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:35  time: 1.4985  data_time: 0.0107  
+2024/07/05 03:34:36 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:05  time: 1.4773  data_time: 0.0107  
+2024/07/05 03:35:05 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4707  data_time: 0.0106  
+2024/07/05 03:35:33 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3324  data_time: 0.0086  
+2024/07/05 03:35:38 - mmengine - INFO - per class results:
+2024/07/05 03:35:38 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.15 | 98.97 |
+| nonsky | 94.28 | 96.23 |
++--------+-------+-------+
+2024/07/05 03:35:38 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.0600  mIoU: 95.7200  mAcc: 97.6000  data_time: 0.0111  time: 1.4414
+2024/07/05 03:49:58 - mmengine - INFO - Iter(train) [ 600/4000]  lr: 9.9697e-04  eta: 1 day, 16:53:09  time: 42.9226  data_time: 0.0103  loss: 0.1197  decode.loss_ce: 0.0819  decode.acc_seg: 96.5066  aux.loss_ce: 0.0379  aux.acc_seg: 96.3467
+2024/07/05 03:49:58 - mmengine - INFO - Saving checkpoint at 600 iterations
+2024/07/05 03:50:28 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:33  time: 1.4559  data_time: 0.0097  
+2024/07/05 03:50:57 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4650  data_time: 0.0100  
+2024/07/05 03:51:27 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4639  data_time: 0.0110  
+2024/07/05 03:51:55 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3272  data_time: 0.0088  
+2024/07/05 03:51:59 - mmengine - INFO - per class results:
+2024/07/05 03:51:59 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.28 | 98.92 |
+| nonsky | 94.55 |  96.6 |
++--------+-------+-------+
+2024/07/05 03:51:59 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.1500  mIoU: 95.9200  mAcc: 97.7600  data_time: 0.0105  time: 1.4327
+2024/07/05 04:06:19 - mmengine - INFO - Iter(train) [ 620/4000]  lr: 9.9687e-04  eta: 1 day, 16:38:12  time: 42.9665  data_time: 0.0113  loss: 0.1237  decode.loss_ce: 0.0843  decode.acc_seg: 96.7548  aux.loss_ce: 0.0394  aux.acc_seg: 96.5138
+2024/07/05 04:06:19 - mmengine - INFO - Saving checkpoint at 620 iterations
+2024/07/05 04:06:49 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:33  time: 1.4624  data_time: 0.0109  
+2024/07/05 04:07:19 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4713  data_time: 0.0097  
+2024/07/05 04:07:49 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4765  data_time: 0.0097  
+2024/07/05 04:08:17 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3368  data_time: 0.0080  
+2024/07/05 04:08:22 - mmengine - INFO - per class results:
+2024/07/05 04:08:22 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.24 | 98.92 |
+| nonsky | 94.47 | 96.53 |
++--------+-------+-------+
+2024/07/05 04:08:22 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.1200  mIoU: 95.8600  mAcc: 97.7200  data_time: 0.0104  time: 1.4445
+2024/07/05 04:22:42 - mmengine - INFO - Iter(train) [ 640/4000]  lr: 9.9676e-04  eta: 1 day, 16:23:19  time: 43.0328  data_time: 0.0113  loss: 0.1229  decode.loss_ce: 0.0840  decode.acc_seg: 97.3470  aux.loss_ce: 0.0389  aux.acc_seg: 97.2208
+2024/07/05 04:22:42 - mmengine - INFO - Saving checkpoint at 640 iterations
+2024/07/05 04:23:13 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:35  time: 1.4810  data_time: 0.0102  
+2024/07/05 04:23:43 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:05  time: 1.4679  data_time: 0.0100  
+2024/07/05 04:24:12 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4703  data_time: 0.0100  
+2024/07/05 04:24:40 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3495  data_time: 0.0083  
+2024/07/05 04:24:45 - mmengine - INFO - per class results:
+2024/07/05 04:24:45 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.19 | 99.08 |
+| nonsky | 94.35 | 96.09 |
++--------+-------+-------+
+2024/07/05 04:24:45 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.0900  mIoU: 95.7700  mAcc: 97.5900  data_time: 0.0101  time: 1.4447
+2024/07/05 04:39:05 - mmengine - INFO - Iter(train) [ 660/4000]  lr: 9.9666e-04  eta: 1 day, 16:08:26  time: 42.9741  data_time: 0.0106  loss: 0.1173  decode.loss_ce: 0.0801  decode.acc_seg: 96.6627  aux.loss_ce: 0.0372  aux.acc_seg: 96.4352
+2024/07/05 04:39:05 - mmengine - INFO - Saving checkpoint at 660 iterations
+2024/07/05 04:39:35 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:34  time: 1.4705  data_time: 0.0110  
+2024/07/05 04:40:05 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4773  data_time: 0.0109  
+2024/07/05 04:40:34 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4622  data_time: 0.0108  
+2024/07/05 04:41:02 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3499  data_time: 0.0089  
+2024/07/05 04:41:07 - mmengine - INFO - per class results:
+2024/07/05 04:41:07 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.16 | 99.05 |
+| nonsky | 94.28 | 96.08 |
++--------+-------+-------+
+2024/07/05 04:41:07 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.0600  mIoU: 95.7200  mAcc: 97.5700  data_time: 0.0109  time: 1.4380
+2024/07/05 04:55:28 - mmengine - INFO - Iter(train) [ 680/4000]  lr: 9.9656e-04  eta: 1 day, 15:53:38  time: 42.9956  data_time: 0.0103  loss: 0.1191  decode.loss_ce: 0.0815  decode.acc_seg: 96.7048  aux.loss_ce: 0.0376  aux.acc_seg: 96.5209
+2024/07/05 04:55:28 - mmengine - INFO - Saving checkpoint at 680 iterations
+2024/07/05 04:55:58 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:34  time: 1.4608  data_time: 0.0097  
+2024/07/05 04:56:28 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:05  time: 1.4995  data_time: 0.0097  
+2024/07/05 04:56:57 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4746  data_time: 0.0105  
+2024/07/05 04:57:26 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3452  data_time: 0.0089  
+2024/07/05 04:57:30 - mmengine - INFO - per class results:
+2024/07/05 04:57:30 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.17 | 99.07 |
+| nonsky | 94.31 | 96.08 |
++--------+-------+-------+
+2024/07/05 04:57:30 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.0700  mIoU: 95.7400  mAcc: 97.5700  data_time: 0.0101  time: 1.4424
+2024/07/05 05:11:50 - mmengine - INFO - Iter(train) [ 700/4000]  lr: 9.9646e-04  eta: 1 day, 15:38:48  time: 42.9560  data_time: 0.0103  loss: 0.1187  decode.loss_ce: 0.0815  decode.acc_seg: 96.7753  aux.loss_ce: 0.0372  aux.acc_seg: 96.5842
+2024/07/05 05:11:50 - mmengine - INFO - Saving checkpoint at 700 iterations
+2024/07/05 05:12:20 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:33  time: 1.4491  data_time: 0.0097  
+2024/07/05 05:12:50 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4841  data_time: 0.0097  
+2024/07/05 05:13:19 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4763  data_time: 0.0097  
+2024/07/05 05:13:47 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3359  data_time: 0.0081  
+2024/07/05 05:13:52 - mmengine - INFO - per class results:
+2024/07/05 05:13:52 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.19 |  99.1 |
+| nonsky | 94.35 | 96.06 |
++--------+-------+-------+
+2024/07/05 05:13:52 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.0900  mIoU: 95.7700  mAcc: 97.5800  data_time: 0.0099  time: 1.4386
+2024/07/05 05:28:14 - mmengine - INFO - Iter(train) [ 720/4000]  lr: 9.9636e-04  eta: 1 day, 15:24:10  time: 43.1106  data_time: 0.0110  loss: 0.1150  decode.loss_ce: 0.0788  decode.acc_seg: 96.6035  aux.loss_ce: 0.0362  aux.acc_seg: 96.3418
+2024/07/05 05:28:14 - mmengine - INFO - Saving checkpoint at 720 iterations
+2024/07/05 05:28:44 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:33  time: 1.4498  data_time: 0.0098  
+2024/07/05 05:29:14 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4738  data_time: 0.0096  
+2024/07/05 05:29:44 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4748  data_time: 0.0097  
+2024/07/05 05:30:12 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3396  data_time: 0.0080  
+2024/07/05 05:30:16 - mmengine - INFO - per class results:
+2024/07/05 05:30:16 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.32 |  99.0 |
+| nonsky | 94.63 | 96.53 |
++--------+-------+-------+
+2024/07/05 05:30:16 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.1800  mIoU: 95.9700  mAcc: 97.7700  data_time: 0.0100  time: 1.4398
+2024/07/05 05:44:36 - mmengine - INFO - Iter(train) [ 740/4000]  lr: 9.9626e-04  eta: 1 day, 15:09:21  time: 42.9590  data_time: 0.0114  loss: 0.1181  decode.loss_ce: 0.0809  decode.acc_seg: 97.0176  aux.loss_ce: 0.0371  aux.acc_seg: 96.8991
+2024/07/05 05:44:36 - mmengine - INFO - Saving checkpoint at 740 iterations
+2024/07/05 05:45:06 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:33  time: 1.4594  data_time: 0.0100  
+2024/07/05 05:45:36 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4646  data_time: 0.0099  
+2024/07/05 05:46:06 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4850  data_time: 0.0100  
+2024/07/05 05:46:34 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3400  data_time: 0.0095  
+2024/07/05 05:46:38 - mmengine - INFO - per class results:
+2024/07/05 05:46:38 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.21 |  99.1 |
+| nonsky | 94.38 | 96.08 |
++--------+-------+-------+
+2024/07/05 05:46:38 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.1000  mIoU: 95.8000  mAcc: 97.5900  data_time: 0.0104  time: 1.4415
+2024/07/05 06:01:00 - mmengine - INFO - Iter(train) [ 760/4000]  lr: 9.9616e-04  eta: 1 day, 14:54:42  time: 43.1006  data_time: 0.0110  loss: 0.1177  decode.loss_ce: 0.0809  decode.acc_seg: 96.9471  aux.loss_ce: 0.0367  aux.acc_seg: 96.7802
+2024/07/05 06:01:00 - mmengine - INFO - Saving checkpoint at 760 iterations
+2024/07/05 06:01:30 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:34  time: 1.4675  data_time: 0.0108  
+2024/07/05 06:02:00 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4733  data_time: 0.0098  
+2024/07/05 06:02:30 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.5105  data_time: 0.0108  
+2024/07/05 06:02:58 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3452  data_time: 0.0084  
+2024/07/05 06:03:03 - mmengine - INFO - per class results:
+2024/07/05 06:03:03 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.32 | 99.16 |
+| nonsky | 94.61 | 96.21 |
++--------+-------+-------+
+2024/07/05 06:03:03 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.1800  mIoU: 95.9700  mAcc: 97.6800  data_time: 0.0104  time: 1.4506
+2024/07/05 06:17:25 - mmengine - INFO - Iter(train) [ 780/4000]  lr: 9.9606e-04  eta: 1 day, 14:40:08  time: 43.0669  data_time: 0.0110  loss: 0.1219  decode.loss_ce: 0.0840  decode.acc_seg: 97.2347  aux.loss_ce: 0.0378  aux.acc_seg: 97.1117
+2024/07/05 06:17:25 - mmengine - INFO - Saving checkpoint at 780 iterations
+2024/07/05 06:17:56 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:34  time: 1.4560  data_time: 0.0108  
+2024/07/05 06:18:25 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4683  data_time: 0.0108  
+2024/07/05 06:18:54 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4694  data_time: 0.0108  
+2024/07/05 06:19:22 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3421  data_time: 0.0087  
+2024/07/05 06:19:27 - mmengine - INFO - per class results:
+2024/07/05 06:19:27 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.21 | 99.11 |
+| nonsky | 94.39 | 96.08 |
++--------+-------+-------+
+2024/07/05 06:19:27 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.1000  mIoU: 95.8000  mAcc: 97.5900  data_time: 0.0108  time: 1.4362
+2024/07/05 06:33:47 - mmengine - INFO - Iter(train) [ 800/4000]  lr: 9.9595e-04  eta: 1 day, 14:25:24  time: 42.9604  data_time: 0.0103  loss: 0.1209  decode.loss_ce: 0.0835  decode.acc_seg: 96.5561  aux.loss_ce: 0.0374  aux.acc_seg: 96.4500
+2024/07/05 06:33:47 - mmengine - INFO - Saving checkpoint at 800 iterations
+2024/07/05 06:34:18 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:34  time: 1.4684  data_time: 0.0107  
+2024/07/05 06:34:48 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:05  time: 1.4850  data_time: 0.0107  
+2024/07/05 06:35:17 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4738  data_time: 0.0099  
+2024/07/05 06:35:46 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3453  data_time: 0.0081  
+2024/07/05 06:35:50 - mmengine - INFO - per class results:
+2024/07/05 06:35:50 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.37 | 98.82 |
+| nonsky | 94.76 |  97.0 |
++--------+-------+-------+
+2024/07/05 06:35:50 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.2200  mIoU: 96.0600  mAcc: 97.9100  data_time: 0.0106  time: 1.4506
+2024/07/05 06:50:11 - mmengine - INFO - Iter(train) [ 820/4000]  lr: 9.9585e-04  eta: 1 day, 14:10:46  time: 43.0495  data_time: 0.0107  loss: 0.1132  decode.loss_ce: 0.0779  decode.acc_seg: 96.0918  aux.loss_ce: 0.0353  aux.acc_seg: 95.8895
+2024/07/05 06:50:11 - mmengine - INFO - Saving checkpoint at 820 iterations
+2024/07/05 06:50:42 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:34  time: 1.4636  data_time: 0.0099  
+2024/07/05 06:51:11 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4632  data_time: 0.0099  
+2024/07/05 06:51:40 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4771  data_time: 0.0098  
+2024/07/05 06:52:08 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3357  data_time: 0.0082  
+2024/07/05 06:52:13 - mmengine - INFO - per class results:
+2024/07/05 06:52:13 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.19 | 99.12 |
+| nonsky | 94.33 |  96.0 |
++--------+-------+-------+
+2024/07/05 06:52:13 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.0800  mIoU: 95.7600  mAcc: 97.5600  data_time: 0.0103  time: 1.4361
+2024/07/05 07:06:36 - mmengine - INFO - Iter(train) [ 840/4000]  lr: 9.9575e-04  eta: 1 day, 13:56:15  time: 43.1294  data_time: 0.0111  loss: 0.1156  decode.loss_ce: 0.0798  decode.acc_seg: 96.7865  aux.loss_ce: 0.0358  aux.acc_seg: 96.6008
+2024/07/05 07:06:36 - mmengine - INFO - Saving checkpoint at 840 iterations
+2024/07/05 07:07:06 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:33  time: 1.4639  data_time: 0.0109  
+2024/07/05 07:07:36 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4587  data_time: 0.0098  
+2024/07/05 07:08:05 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4675  data_time: 0.0098  
+2024/07/05 07:08:33 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3421  data_time: 0.0081  
+2024/07/05 07:08:38 - mmengine - INFO - per class results:
+2024/07/05 07:08:38 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.32 |  99.1 |
+| nonsky | 94.61 | 96.32 |
++--------+-------+-------+
+2024/07/05 07:08:38 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.1800  mIoU: 95.9600  mAcc: 97.7100  data_time: 0.0105  time: 1.4395
+2024/07/05 07:22:58 - mmengine - INFO - Iter(train) [ 860/4000]  lr: 9.9565e-04  eta: 1 day, 13:41:36  time: 42.9661  data_time: 0.0109  loss: 0.1148  decode.loss_ce: 0.0791  decode.acc_seg: 97.1319  aux.loss_ce: 0.0357  aux.acc_seg: 96.9902
+2024/07/05 07:22:58 - mmengine - INFO - Saving checkpoint at 860 iterations
+2024/07/05 07:23:29 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:34  time: 1.4678  data_time: 0.0103  
+2024/07/05 07:23:58 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4755  data_time: 0.0103  
+2024/07/05 07:24:28 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4887  data_time: 0.0104  
+2024/07/05 07:24:56 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3563  data_time: 0.0084  
+2024/07/05 07:25:01 - mmengine - INFO - per class results:
+2024/07/05 07:25:01 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.26 | 99.14 |
+| nonsky | 94.47 |  96.1 |
++--------+-------+-------+
+2024/07/05 07:25:01 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.1300  mIoU: 95.8600  mAcc: 97.6200  data_time: 0.0106  time: 1.4446
+2024/07/05 07:39:20 - mmengine - INFO - Iter(train) [ 880/4000]  lr: 9.9555e-04  eta: 1 day, 13:26:52  time: 42.8813  data_time: 0.0111  loss: 0.1140  decode.loss_ce: 0.0789  decode.acc_seg: 96.2256  aux.loss_ce: 0.0351  aux.acc_seg: 96.0759
+2024/07/05 07:39:20 - mmengine - INFO - Saving checkpoint at 880 iterations
+2024/07/05 07:39:50 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:33  time: 1.4506  data_time: 0.0100  
+2024/07/05 07:40:20 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4717  data_time: 0.0100  
+2024/07/05 07:40:49 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.5146  data_time: 0.0103  
+2024/07/05 07:41:21 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:06  time: 1.3277  data_time: 0.0082  
+2024/07/05 07:41:26 - mmengine - INFO - per class results:
+2024/07/05 07:41:26 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.17 | 99.22 |
+| nonsky | 94.28 | 95.76 |
++--------+-------+-------+
+2024/07/05 07:41:26 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.0700  mIoU: 95.7200  mAcc: 97.4900  data_time: 0.0104  time: 1.4812
+2024/07/05 07:55:43 - mmengine - INFO - Iter(train) [ 900/4000]  lr: 9.9545e-04  eta: 1 day, 13:12:06  time: 42.8325  data_time: 0.0111  loss: 0.1137  decode.loss_ce: 0.0783  decode.acc_seg: 96.8170  aux.loss_ce: 0.0354  aux.acc_seg: 96.7143
+2024/07/05 07:55:43 - mmengine - INFO - Saving checkpoint at 900 iterations
+2024/07/05 07:56:14 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:33  time: 1.4591  data_time: 0.0100  
+2024/07/05 07:56:43 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4748  data_time: 0.0101  
+2024/07/05 07:57:13 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4686  data_time: 0.0111  
+2024/07/05 07:57:41 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3264  data_time: 0.0088  
+2024/07/05 07:57:45 - mmengine - INFO - per class results:
+2024/07/05 07:57:45 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.27 | 98.97 |
+| nonsky | 94.53 | 96.49 |
++--------+-------+-------+
+2024/07/05 07:57:45 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.1500  mIoU: 95.9000  mAcc: 97.7300  data_time: 0.0105  time: 1.4342
+2024/07/05 08:12:03 - mmengine - INFO - Iter(train) [ 920/4000]  lr: 9.9535e-04  eta: 1 day, 12:57:22  time: 42.8926  data_time: 0.0111  loss: 0.1186  decode.loss_ce: 0.0818  decode.acc_seg: 96.2112  aux.loss_ce: 0.0368  aux.acc_seg: 95.9730
+2024/07/05 08:12:03 - mmengine - INFO - Saving checkpoint at 920 iterations
+2024/07/05 08:12:34 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:33  time: 1.4700  data_time: 0.0122  
+2024/07/05 08:13:03 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4874  data_time: 0.0114  
+2024/07/05 08:13:32 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4773  data_time: 0.0113  
+2024/07/05 08:14:01 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3428  data_time: 0.0089  
+2024/07/05 08:14:05 - mmengine - INFO - per class results:
+2024/07/05 08:14:05 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.36 | 99.16 |
+| nonsky | 94.68 | 96.28 |
++--------+-------+-------+
+2024/07/05 08:14:05 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.2000  mIoU: 96.0200  mAcc: 97.7200  data_time: 0.0117  time: 1.4370
+2024/07/05 08:28:23 - mmengine - INFO - Iter(train) [ 940/4000]  lr: 9.9524e-04  eta: 1 day, 12:42:39  time: 42.8773  data_time: 0.0104  loss: 0.1063  decode.loss_ce: 0.0735  decode.acc_seg: 97.5967  aux.loss_ce: 0.0327  aux.acc_seg: 97.5545
+2024/07/05 08:28:23 - mmengine - INFO - Saving checkpoint at 940 iterations
+2024/07/05 08:28:54 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:32  time: 1.4481  data_time: 0.0096  
+2024/07/05 08:29:23 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4665  data_time: 0.0098  
+2024/07/05 08:29:52 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4722  data_time: 0.0096  
+2024/07/05 08:30:20 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3355  data_time: 0.0080  
+2024/07/05 08:30:25 - mmengine - INFO - per class results:
+2024/07/05 08:30:25 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.15 | 99.17 |
+| nonsky | 94.25 | 95.82 |
++--------+-------+-------+
+2024/07/05 08:30:25 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.0600  mIoU: 95.7000  mAcc: 97.5000  data_time: 0.0099  time: 1.4308
+2024/07/05 08:44:43 - mmengine - INFO - Iter(train) [ 960/4000]  lr: 9.9514e-04  eta: 1 day, 12:27:59  time: 42.9433  data_time: 0.0104  loss: 0.1095  decode.loss_ce: 0.0754  decode.acc_seg: 96.8058  aux.loss_ce: 0.0341  aux.acc_seg: 96.5995
+2024/07/05 08:44:43 - mmengine - INFO - Saving checkpoint at 960 iterations
+2024/07/05 08:45:14 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:33  time: 1.4645  data_time: 0.0096  
+2024/07/05 08:45:43 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4917  data_time: 0.0105  
+2024/07/05 08:46:13 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4754  data_time: 0.0110  
+2024/07/05 08:46:41 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3376  data_time: 0.0090  
+2024/07/05 08:46:46 - mmengine - INFO - per class results:
+2024/07/05 08:46:46 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.38 | 98.99 |
+| nonsky | 94.75 | 96.67 |
++--------+-------+-------+
+2024/07/05 08:46:46 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.2200  mIoU: 96.0600  mAcc: 97.8300  data_time: 0.0108  time: 1.4376
+2024/07/05 09:01:04 - mmengine - INFO - Iter(train) [ 980/4000]  lr: 9.9504e-04  eta: 1 day, 12:13:20  time: 42.8579  data_time: 0.0104  loss: 0.1092  decode.loss_ce: 0.0754  decode.acc_seg: 96.9230  aux.loss_ce: 0.0338  aux.acc_seg: 96.7072
+2024/07/05 09:01:04 - mmengine - INFO - Saving checkpoint at 980 iterations
+2024/07/05 09:01:34 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:33  time: 1.4594  data_time: 0.0098  
+2024/07/05 09:02:04 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.5246  data_time: 0.0097  
+2024/07/05 09:02:34 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4686  data_time: 0.0096  
+2024/07/05 09:03:02 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3297  data_time: 0.0080  
+2024/07/05 09:03:06 - mmengine - INFO - per class results:
+2024/07/05 09:03:06 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.21 | 99.13 |
+| nonsky | 94.38 | 96.03 |
++--------+-------+-------+
+2024/07/05 09:03:06 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.1000  mIoU: 95.7900  mAcc: 97.5800  data_time: 0.0100  time: 1.4402
+2024/07/05 09:17:26 - mmengine - INFO - Exp name: unet-s5-d16_fcn_4xb4-160k_cityscapes-512x1024_20240704_193755
+2024/07/05 09:17:26 - mmengine - INFO - Iter(train) [1000/4000]  lr: 9.9494e-04  eta: 1 day, 11:58:43  time: 42.9594  data_time: 0.0118  loss: 0.1086  decode.loss_ce: 0.0751  decode.acc_seg: 97.2326  aux.loss_ce: 0.0335  aux.acc_seg: 97.1314
+2024/07/05 09:17:26 - mmengine - INFO - Saving checkpoint at 1000 iterations
+2024/07/05 09:17:56 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:33  time: 1.4572  data_time: 0.0097  
+2024/07/05 09:18:25 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4624  data_time: 0.0097  
+2024/07/05 09:18:54 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4654  data_time: 0.0096  
+2024/07/05 09:19:23 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3364  data_time: 0.0080  
+2024/07/05 09:19:27 - mmengine - INFO - per class results:
+2024/07/05 09:19:27 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.31 | 99.13 |
+| nonsky | 94.59 | 96.24 |
++--------+-------+-------+
+2024/07/05 09:19:27 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.1700  mIoU: 95.9500  mAcc: 97.6900  data_time: 0.0099  time: 1.4332
+2024/07/05 09:33:47 - mmengine - INFO - Iter(train) [1020/4000]  lr: 9.9484e-04  eta: 1 day, 11:44:09  time: 42.9348  data_time: 0.0106  loss: 0.1065  decode.loss_ce: 0.0735  decode.acc_seg: 96.5039  aux.loss_ce: 0.0330  aux.acc_seg: 96.3304
+2024/07/05 09:33:47 - mmengine - INFO - Saving checkpoint at 1020 iterations
+2024/07/05 09:34:18 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:34  time: 1.4666  data_time: 0.0096  
+2024/07/05 09:34:47 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4575  data_time: 0.0097  
+2024/07/05 09:35:16 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4656  data_time: 0.0096  
+2024/07/05 09:35:44 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3257  data_time: 0.0080  
+2024/07/05 09:35:49 - mmengine - INFO - per class results:
+2024/07/05 09:35:49 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.35 | 99.13 |
+| nonsky | 94.68 | 96.33 |
++--------+-------+-------+
+2024/07/05 09:35:49 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.2000  mIoU: 96.0100  mAcc: 97.7300  data_time: 0.0100  time: 1.4330
+2024/07/05 09:50:07 - mmengine - INFO - Iter(train) [1040/4000]  lr: 9.9474e-04  eta: 1 day, 11:29:32  time: 42.9391  data_time: 0.0108  loss: 0.1088  decode.loss_ce: 0.0751  decode.acc_seg: 97.0867  aux.loss_ce: 0.0337  aux.acc_seg: 97.0295
+2024/07/05 09:50:07 - mmengine - INFO - Saving checkpoint at 1040 iterations
+2024/07/05 09:50:38 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:34  time: 1.4677  data_time: 0.0111  
+2024/07/05 09:51:07 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4646  data_time: 0.0106  
+2024/07/05 09:51:36 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4708  data_time: 0.0096  
+2024/07/05 09:52:04 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3287  data_time: 0.0080  
+2024/07/05 09:52:09 - mmengine - INFO - per class results:
+2024/07/05 09:52:09 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   |  97.3 | 99.15 |
+| nonsky | 94.57 | 96.18 |
++--------+-------+-------+
+2024/07/05 09:52:09 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.1600  mIoU: 95.9300  mAcc: 97.6700  data_time: 0.0106  time: 1.4350
+2024/07/05 10:06:27 - mmengine - INFO - Iter(train) [1060/4000]  lr: 9.9464e-04  eta: 1 day, 11:14:53  time: 42.8517  data_time: 0.0105  loss: 0.1097  decode.loss_ce: 0.0759  decode.acc_seg: 96.6238  aux.loss_ce: 0.0338  aux.acc_seg: 96.4725
+2024/07/05 10:06:27 - mmengine - INFO - Saving checkpoint at 1060 iterations
+2024/07/05 10:06:57 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:33  time: 1.4631  data_time: 0.0112  
+2024/07/05 10:07:27 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4779  data_time: 0.0110  
+2024/07/05 10:07:56 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4636  data_time: 0.0114  
+2024/07/05 10:08:24 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3337  data_time: 0.0094  
+2024/07/05 10:08:28 - mmengine - INFO - per class results:
+2024/07/05 10:08:28 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.36 | 99.12 |
+| nonsky | 94.68 | 96.37 |
++--------+-------+-------+
+2024/07/05 10:08:28 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.2000  mIoU: 96.0200  mAcc: 97.7400  data_time: 0.0114  time: 1.4320
+2024/07/05 10:22:47 - mmengine - INFO - Iter(train) [1080/4000]  lr: 9.9454e-04  eta: 1 day, 11:00:18  time: 42.8861  data_time: 0.0108  loss: 0.1097  decode.loss_ce: 0.0760  decode.acc_seg: 97.1913  aux.loss_ce: 0.0337  aux.acc_seg: 97.0360
+2024/07/05 10:22:47 - mmengine - INFO - Saving checkpoint at 1080 iterations
+2024/07/05 10:23:18 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:35  time: 1.4700  data_time: 0.0115  
+2024/07/05 10:23:48 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:05  time: 1.4683  data_time: 0.0115  
+2024/07/05 10:24:17 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4579  data_time: 0.0114  
+2024/07/05 10:24:45 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3283  data_time: 0.0093  
+2024/07/05 10:24:50 - mmengine - INFO - per class results:
+2024/07/05 10:24:50 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.33 | 99.27 |
+| nonsky | 94.61 |  96.0 |
++--------+-------+-------+
+2024/07/05 10:24:50 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.1800  mIoU: 95.9700  mAcc: 97.6300  data_time: 0.0114  time: 1.4399
+2024/07/05 10:40:19 - mmengine - INFO - Iter(train) [1100/4000]  lr: 9.9443e-04  eta: 1 day, 10:48:49  time: 49.3690  data_time: 0.0113  loss: 0.1092  decode.loss_ce: 0.0757  decode.acc_seg: 97.1924  aux.loss_ce: 0.0335  aux.acc_seg: 97.0862
+2024/07/05 10:40:19 - mmengine - INFO - Saving checkpoint at 1100 iterations
+2024/07/05 10:41:07 - mmengine - INFO - Iter(val) [20/84]    eta: 0:02:31  time: 2.4489  data_time: 0.0158  
+2024/07/05 10:41:46 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:34  time: 1.5133  data_time: 0.0107  
+2024/07/05 10:42:16 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:46  time: 1.5084  data_time: 0.0101  
+2024/07/05 10:42:44 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:07  time: 1.3425  data_time: 0.0086  
+2024/07/05 10:42:49 - mmengine - INFO - per class results:
+2024/07/05 10:42:49 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.35 |  99.2 |
+| nonsky | 94.65 | 96.17 |
++--------+-------+-------+
+2024/07/05 10:42:49 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.1900  mIoU: 96.0000  mAcc: 97.6900  data_time: 0.0119  time: 1.7662
+2024/07/05 10:57:12 - mmengine - INFO - Iter(train) [1120/4000]  lr: 9.9433e-04  eta: 1 day, 10:34:23  time: 43.1491  data_time: 0.0109  loss: 0.1122  decode.loss_ce: 0.0776  decode.acc_seg: 96.9041  aux.loss_ce: 0.0346  aux.acc_seg: 96.7366
+2024/07/05 10:57:12 - mmengine - INFO - Saving checkpoint at 1120 iterations
+2024/07/05 10:57:43 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:35  time: 1.5139  data_time: 0.0100  
+2024/07/05 10:58:12 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4585  data_time: 0.0102  
+2024/07/05 10:58:42 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4720  data_time: 0.0101  
+2024/07/05 10:59:10 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3445  data_time: 0.0084  
+2024/07/05 10:59:15 - mmengine - INFO - per class results:
+2024/07/05 10:59:15 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.15 | 99.23 |
+| nonsky | 94.25 | 95.71 |
++--------+-------+-------+
+2024/07/05 10:59:15 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.0600  mIoU: 95.7000  mAcc: 97.4700  data_time: 0.0105  time: 1.4380
+2024/07/05 11:15:04 - mmengine - INFO - Iter(train) [1140/4000]  lr: 9.9423e-04  eta: 1 day, 10:23:33  time: 49.0181  data_time: 0.0111  loss: 0.1094  decode.loss_ce: 0.0758  decode.acc_seg: 97.0025  aux.loss_ce: 0.0337  aux.acc_seg: 96.8702
+2024/07/05 11:15:04 - mmengine - INFO - Saving checkpoint at 1140 iterations
+2024/07/05 11:15:35 - mmengine - INFO - Iter(val) [20/84]    eta: 0:01:33  time: 1.4510  data_time: 0.0109  
+2024/07/05 11:16:04 - mmengine - INFO - Iter(val) [40/84]    eta: 0:01:04  time: 1.4630  data_time: 0.0107  
+2024/07/05 11:16:33 - mmengine - INFO - Iter(val) [60/84]    eta: 0:00:35  time: 1.4790  data_time: 0.0107  
+2024/07/05 11:17:01 - mmengine - INFO - Iter(val) [80/84]    eta: 0:00:05  time: 1.3327  data_time: 0.0086  
+2024/07/05 11:17:06 - mmengine - INFO - per class results:
+2024/07/05 11:17:06 - mmengine - INFO - 
++--------+-------+-------+
+| Class  |  IoU  |  Acc  |
++--------+-------+-------+
+|  sky   | 97.35 | 99.13 |
+| nonsky | 94.67 | 96.31 |
++--------+-------+-------+
+2024/07/05 11:17:06 - mmengine - INFO - Iter(val) [84/84]    aAcc: 98.2000  mIoU: 96.0100  mAcc: 97.7200  data_time: 0.0110  time: 1.4319

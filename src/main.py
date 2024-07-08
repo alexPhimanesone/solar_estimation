@@ -95,39 +95,30 @@ for key in mask_dict.keys():
 #                       MMSEGMENTATION
 #=================================================================
 
-
 '''
-#VIS_VAL
-from vis import vis_val
-timestamp = "0702-1952"
+#VIS_TRAIN and VIS_VAL
+from vis import vis_train, vis_val
+timestamp = "0705-1214"
+vis_train(timestamp)
 vis_val(timestamp)
 '''
 
-'''
-#VIS_TRAIN
-from vis import vis_train
-timestamp = "0610-1109"
-vis_train(timestamp)
-'''
+# 0703-0155: iter = 900, best mAcc, 6550 2nd best, 6550=MAGIC
+# 0704-1937: iter = 800, best mAcc,  960 2nd best
+# 0705-1214: iter = 440, best mAcc, 1080 best aAcc
 
 '''
 #GET_SCORE
-from inference import get_cm_arr
+from inference import get_cm_arr, compute_metrics
 print("get_score starts running")
+cm_arr_path = opj(training_dir, "0703-0155", "cm_arr6550.npy")
 cm_arr = get_cm_arr()
-np.save(opj(training_dir, "0610-1109", "cm_arr.npy"), cm_arr)
-'''
-
-'''
-#COMPUTE_METRICS
-from inference import compute_metrics
-cm_arr = np.load(opj(training_dir, "0610-1109", "cm_arr.npy"))
-print(np.unique(cm_arr))
-precision, recall, f1_score, global_accuracy = compute_metrics(cm_arr)
-print(f'Total Precision: {precision:.4f}')
-print(f'Total Recall: {recall:.4f}')
-print(f'Total F1 Score: {f1_score:.4f}')
-print(f'Total Global Accuracy: {global_accuracy:.4f}')
+np.save(cm_arr_path, cm_arr)
+#cm_arr = np.load(cm_arr_path)
+print(cm_arr)
+metrics = compute_metrics(cm_arr)
+for key in metrics.keys():
+    print(f"{key}: {metrics[key]}")
 '''
 
 '''

@@ -42,16 +42,23 @@ class SkyDetectionDataset(BaseSegDataset):
 
 def get_cfg():
     
+    # Base config file
     cfg = Config.fromfile(os.path.normpath(opj(os.path.dirname(os.path.abspath(__file__)),
                                                'configs', 'unet', 'unet-s5-d16_fcn_4xb4-160k_cityscapes-512x1024.py')))
 
+    # Normalization
     cfg.norm_cfg = dict(requires_grad=True, type='BN') # Since we use only one GPU, BN is used instead of SyncBN
+
+    # Crop
     cfg.crop_size = (512, 512)
     cfg.model.data_preprocessor.size = cfg.crop_size
+
+    # Model
     cfg.model.backbone.norm_cfg = cfg.norm_cfg
     cfg.model.decode_head.norm_cfg = cfg.norm_cfg
     cfg.model.auxiliary_head.norm_cfg = cfg.norm_cfg
-    # modify num classes of the model in decode/auxiliary head
+
+    # Modifying num classes of the model in decode/auxiliary head
     cfg.model.decode_head.num_classes = 2
     cfg.model.auxiliary_head.num_classes = 2
     cfg.model.decode_head.out_channels = 2
@@ -63,6 +70,7 @@ def get_cfg():
     cfg.dataset_type = 'SkyDetectionDataset'
     cfg.data_root = data_root
 
+    # Train pipeline
     cfg.train_pipeline = [
         dict(type='LoadImageFromFile'),
         dict(type='LoadAnnotations'),
@@ -75,6 +83,7 @@ def get_cfg():
         dict(type='PackSegInputs')
     ]
 
+    # Test pipeline
     cfg.test_pipeline = [
         dict(type='LoadImageFromFile'),
         dict(type='Resize', scale=(512, 512), keep_ratio=True),
@@ -84,20 +93,22 @@ def get_cfg():
         dict(type='PackSegInputs')
     ]
 
+    # Test config
     cfg.model.test_cfg = dict(crop_size=(512, 512), mode='slide', stride=(170, 170))
 
+    # Train dataloader
     cfg.train_dataloader.dataset.type = cfg.dataset_type
     cfg.train_dataloader.dataset.data_root = cfg.data_root
     cfg.train_dataloader.dataset.data_prefix = dict(img_path=opj("img_dir", "train"),
                                                     seg_map_path=opj("ann_dir", "train"))
     cfg.train_dataloader.dataset.pipeline = cfg.train_pipeline
 
+    # Test dataloader
     cfg.val_dataloader.dataset.type = cfg.dataset_type
     cfg.val_dataloader.dataset.data_root = cfg.data_root 
     cfg.val_dataloader.dataset.data_prefix = dict(img_path=opj("img_dir", "test"),
                                                 seg_map_path=opj("ann_dir", "test"))
     cfg.val_dataloader.dataset.pipeline = cfg.test_pipeline
-
     cfg.test_dataloader = cfg.val_dataloader
 
     # Load the pretrained weights
@@ -107,11 +118,24 @@ def get_cfg():
     # Set up working dir to save files and logs.
     cfg.work_dir = save_dir
 
-    cfg.train_dataloader.batch_size = 4 # 1 epoch ~ 100 iter
-    cfg.train_cfg.max_iters = 20000 # ~ 200 epochs
-    cfg.train_cfg.val_interval = 50
-    cfg.default_hooks.logger.interval = 50
-    cfg.default_hooks.checkpoint.interval = 50
+    # Batch size
+    cfg.train_dataloader.batch_size = 16 # 1 epoch ~ 20 iter
+
+    # Training duration
+    max_iters = 2000 # ~ 100 epochs
+    cfg.train_cfg.max_iters = max_iters
+
+    # LR scheduling
+    initial_lr = 1e-3
+    cfg.optim_wrapper.optimizer.lr = initial_lr
+    cfg.optimizer.lr = initial_lr
+    cfg.param_scheduler[0].eta_min = 1e-5
+    cfg.param_scheduler[0].end = max_iters
+
+    # Logs
+    cfg.train_cfg.val_interval = 20
+    cfg.default_hooks.logger.interval = 20
+    cfg.default_hooks.checkpoint.interval = 20
 
     # Set seed to facilitate reproducing the result
     cfg['randomness'] = dict(seed=0)

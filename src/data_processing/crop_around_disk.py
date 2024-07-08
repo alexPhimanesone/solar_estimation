@@ -8,9 +8,6 @@ import cv2
 import yaml as yml
 from glob import glob
 from colorama import Fore, Style
-import omnicalib as omni
-from calibrate_camera import calibrate_camera
-from camera_coords_to_image_intrinsic import camera_coords_to_image_intrinsic
 from navig_dataset import get_id_pprad, read_all_csv
 
 data_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data'))
@@ -28,6 +25,7 @@ def calibrate(calib_set_path):
     """
     Generates a calibration file.
     """
+    from calibrate_camera import calibrate_camera
 
     # If not done for this calibration set, perform calibration (long computing)
     calibration_path = os.path.join(calib_set_path,
@@ -53,6 +51,7 @@ def estimate_radius(calib_set_path):
     """
     Save principal point and radius at pprad_path.
     """
+    from camera_coords_to_image_intrinsic import camera_coords_to_image_intrinsic
     print(f"{Fore.YELLOW}Estimating FOV...{Style.RESET_ALL}")
 
     data_dir = "C:/Users/aphimaneso/Work/Projects/mmsegmentation/data/"

@@ -24,8 +24,8 @@ data_preprocessor = dict(
 data_root = '/home/max/APH/solar_estimation/mmsegmentation/solar_estimation/data/dataset/mmseg_orga/cropped'
 dataset_type = 'SkyDetectionDataset'
 default_hooks = dict(
-    checkpoint=dict(by_epoch=False, interval=50, type='CheckpointHook'),
-    logger=dict(interval=50, log_metric_by_epoch=False, type='LoggerHook'),
+    checkpoint=dict(by_epoch=False, interval=20, type='CheckpointHook'),
+    logger=dict(interval=20, log_metric_by_epoch=False, type='LoggerHook'),
     param_scheduler=dict(type='ParamSchedulerHook'),
     sampler_seed=dict(type='DistSamplerSeedHook'),
     timer=dict(type='IterTimerHook'),
@@ -157,15 +157,15 @@ model = dict(
 norm_cfg = dict(requires_grad=True, type='BN')
 optim_wrapper = dict(
     clip_grad=None,
-    optimizer=dict(lr=0.01, momentum=0.9, type='SGD', weight_decay=0.0005),
+    optimizer=dict(lr=0.001, momentum=0.9, type='SGD', weight_decay=0.0005),
     type='OptimWrapper')
-optimizer = dict(lr=0.01, momentum=0.9, type='SGD', weight_decay=0.0005)
+optimizer = dict(lr=0.001, momentum=0.9, type='SGD', weight_decay=0.0005)
 param_scheduler = [
     dict(
         begin=0,
         by_epoch=False,
-        end=160000,
-        eta_min=0.0001,
+        end=2000,
+        eta_min=1e-05,
         power=0.9,
         type='PolyLR'),
 ]
@@ -204,9 +204,9 @@ test_pipeline = [
     dict(type='LoadAnnotations'),
     dict(type='PackSegInputs'),
 ]
-train_cfg = dict(max_iters=3, type='IterBasedTrainLoop', val_interval=50)
+train_cfg = dict(max_iters=2000, type='IterBasedTrainLoop', val_interval=20)
 train_dataloader = dict(
-    batch_size=4,
+    batch_size=16,
     dataset=dict(
         data_prefix=dict(
             img_path='img_dir/train', seg_map_path='ann_dir/train'),
@@ -227,7 +227,7 @@ train_dataloader = dict(
                 type='RandomRotate'),
             dict(prob=0.5, type='RandomFlip'),
             dict(
-                hue_delta=0,
+                hue_delta=1,
                 saturation_range=(
                     1.0,
                     1.0,
@@ -249,7 +249,7 @@ train_pipeline = [
     dict(degree=180, pad_val=0, prob=1, seg_pad_val=0, type='RandomRotate'),
     dict(prob=0.5, type='RandomFlip'),
     dict(
-        hue_delta=0,
+        hue_delta=1,
         saturation_range=(
             1.0,
             1.0,
@@ -316,4 +316,4 @@ visualizer = dict(
     vis_backends=[
         dict(type='LocalVisBackend'),
     ])
-work_dir = '/home/max/APH/solar_estimation/mmsegmentation/solar_estimation/data/Training/0703-0121'
+work_dir = '/home/max/APH/solar_estimation/mmsegmentation/solar_estimation/data/Training/0705-1214'

@@ -21,11 +21,11 @@ data_preprocessor = dict(
         57.375,
     ],
     type='SegDataPreProcessor')
-data_root = '../data/dataset/mmseg_orga/cropped'
+data_root = '/home/max/APH/solar_estimation/mmsegmentation/solar_estimation/data/dataset/mmseg_orga/cropped'
 dataset_type = 'SkyDetectionDataset'
 default_hooks = dict(
-    checkpoint=dict(by_epoch=False, interval=3, type='CheckpointHook'),
-    logger=dict(interval=4, log_metric_by_epoch=False, type='LoggerHook'),
+    checkpoint=dict(by_epoch=False, interval=50, type='CheckpointHook'),
+    logger=dict(interval=50, log_metric_by_epoch=False, type='LoggerHook'),
     param_scheduler=dict(type='ParamSchedulerHook'),
     sampler_seed=dict(type='DistSamplerSeedHook'),
     timer=dict(type='IterTimerHook'),
@@ -43,7 +43,7 @@ img_ratios = [
     1.5,
     1.75,
 ]
-load_from = '../data/pretrained_models/fcn_unet_s5-d16_4x4_512x1024_160k_cityscapes_20211210_145204-6860854e.pth'
+load_from = '/home/max/APH/solar_estimation/mmsegmentation/solar_estimation/data/pretrained_models/fcn_unet_s5-d16_4x4_512x1024_160k_cityscapes_20211210_145204-6860854e.pth'
 log_level = 'INFO'
 log_processor = dict(by_epoch=False)
 model = dict(
@@ -176,7 +176,8 @@ test_dataloader = dict(
     batch_size=1,
     dataset=dict(
         data_prefix=dict(img_path='img_dir/test', seg_map_path='ann_dir/test'),
-        data_root='../data/dataset/mmseg_orga/cropped',
+        data_root=
+        '/home/max/APH/solar_estimation/mmsegmentation/solar_estimation/data/dataset/mmseg_orga/cropped',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(keep_ratio=True, scale=(
@@ -203,13 +204,14 @@ test_pipeline = [
     dict(type='LoadAnnotations'),
     dict(type='PackSegInputs'),
 ]
-train_cfg = dict(max_iters=16, type='IterBasedTrainLoop', val_interval=2)
+train_cfg = dict(max_iters=20000, type='IterBasedTrainLoop', val_interval=50)
 train_dataloader = dict(
-    batch_size=8,
+    batch_size=4,
     dataset=dict(
         data_prefix=dict(
             img_path='img_dir/train', seg_map_path='ann_dir/train'),
-        data_root='../data/dataset/mmseg_orga/cropped',
+        data_root=
+        '/home/max/APH/solar_estimation/mmsegmentation/solar_estimation/data/dataset/mmseg_orga/cropped',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(type='LoadAnnotations'),
@@ -224,7 +226,13 @@ train_dataloader = dict(
                 seg_pad_val=0,
                 type='RandomRotate'),
             dict(prob=0.5, type='RandomFlip'),
-            dict(type='PhotoMetricDistortion'),
+            dict(
+                hue_delta=1,
+                saturation_range=(
+                    1.0,
+                    1.0,
+                ),
+                type='PhotoMetricDistortion'),
             dict(type='PackSegInputs'),
         ],
         type='SkyDetectionDataset'),
@@ -240,7 +248,13 @@ train_pipeline = [
     ), type='Resize'),
     dict(degree=180, pad_val=0, prob=1, seg_pad_val=0, type='RandomRotate'),
     dict(prob=0.5, type='RandomFlip'),
-    dict(type='PhotoMetricDistortion'),
+    dict(
+        hue_delta=1,
+        saturation_range=(
+            1.0,
+            1.0,
+        ),
+        type='PhotoMetricDistortion'),
     dict(type='PackSegInputs'),
 ]
 tta_model = dict(type='SegTTAModel')
@@ -274,7 +288,8 @@ val_dataloader = dict(
     batch_size=1,
     dataset=dict(
         data_prefix=dict(img_path='img_dir/test', seg_map_path='ann_dir/test'),
-        data_root='../data/dataset/mmseg_orga/cropped',
+        data_root=
+        '/home/max/APH/solar_estimation/mmsegmentation/solar_estimation/data/dataset/mmseg_orga/cropped',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(keep_ratio=True, scale=(
@@ -301,4 +316,4 @@ visualizer = dict(
     vis_backends=[
         dict(type='LocalVisBackend'),
     ])
-work_dir = '../data/Training/0702-1922'
+work_dir = '/home/max/APH/solar_estimation/mmsegmentation/solar_estimation/data/Training/0703-0155'
